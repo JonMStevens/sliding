@@ -12,6 +12,7 @@
 
 .puzzle-square.empty-square {
   background-color: pink;
+  visibility: hidden;
 }
 
 button {

@@ -1,5 +1,4 @@
 // todo:
-// remove text from empty square
 // change win checker so function will stop looping when we determine no win
 // allow for shifting multiple squres at once
 // timer
