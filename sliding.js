@@ -9,6 +9,7 @@
 const GRID_SIZE = 4;
 $(function() {
   createBoard();
+  $('#btnCheckWin').click(alertWin);
 });
 
 function createBoard() {
