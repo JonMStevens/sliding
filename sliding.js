@@ -1,7 +1,6 @@
 // todo:
-// git
-// remove destrow/destcol and just calculate it each time
 // remove text from empty square
+// change win checker so function will stop looping when we determine no win
 // allow for shifting multiple squres at once
 // timer
 // move counter
@@ -28,10 +27,10 @@ function createBoard() {
   for (var row = 0; row < GRID_SIZE; row++) {
     for (var col = 0; col < GRID_SIZE; col++) {
       // squares are in correct order mark the intended/destination position
-      squareArr[GRID_SIZE * row + col] = $('<button  class=\'puzzle-square\'>' +
-        (GRID_SIZE * row + col + 1) + '</button>');
-      squareArr[GRID_SIZE * row + col].attr('destrow', row);
-      squareArr[GRID_SIZE * row + col].attr('destcol', col);
+      var val = (GRID_SIZE * row + col + 1);
+      squareArr[GRID_SIZE * row + col] =
+        $('<button  class=\'puzzle-square\'>' + val + '</button>');
+      squareArr[GRID_SIZE * row + col].attr('val', val);
     }
   }
 
@@ -84,7 +83,7 @@ function slide($clicked, $empty) {
     includes all squares to the right of $clicked and to the left of $empty
     ends with $empty */
     $toMove = $('.puzzle-square[currrow=\'' +
-    $clicked.attr('currrow').toString() + '\']').filter(function() {
+      $clicked.attr('currrow').toString() + '\']').filter(function() {
         return $(this).attr('currcol') >= $clicked.attr('currcol') &&
         $(this).attr('currcol') <= $empty.attr('currcol');
       });
@@ -147,23 +146,20 @@ function slide($clicked, $empty) {
 }
 
 function slideSquares(arr, dir) {
-  var temp = [$(arr[0]).attr('destrow'),
-    $(arr[0]).attr('destcol'),
+  var temp = [$(arr[0]).attr('val'),
     $(arr[0]).attr('currrow'),
     $(arr[0]).attr('currcol'),
     $(arr[0]).html()];
 
-  $(arr[0]).attr('destrow', $(arr[arr.length - 1]).attr('destrow'));
-  $(arr[0]).attr('destcol', $(arr[arr.length - 1]).attr('destcol'));
+  $(arr[0]).attr('val', $(arr[arr.length - 1]).attr('val'));
   //$(arr[0]).attr('currrow',$(arr[arr.length - 1]).attr('currrow'));
   //$(arr[0]).attr('currcol',$(arr[arr.length - 1]).attr('currcol'));
   $(arr[0]).html($(arr[arr.length - 1]).html());
 
-  $(arr[arr.length - 1]).attr('destrow', temp[0]);
-  $(arr[arr.length - 1]).attr('destcol', temp[1]);
-  //$(arr[arr.length - 1]).attr('currrow',temp[2]);
-  //$(arr[arr.length - 1]).attr('currcol',temp[3]);
-  $(arr[arr.length - 1]).html(temp[4]);
+  $(arr[arr.length - 1]).attr('val', temp[0]);
+  //$(arr[arr.length - 1]).attr('currrow',temp[1]);
+  //$(arr[arr.length - 1]).attr('currcol',temp[2]);
+  $(arr[arr.length - 1]).html(temp[3]);
 
 }
 
@@ -172,16 +168,18 @@ function alertWin() {
 }
 
 function isWin() {
+  /* for each square calculate which row and column the square will end up
+       in when the game is won
+    if a square is not its correct row and column the game is not yet won
+    if no square is out of place the game is won */
   var w = true;
   $('.puzzle-square').each(function() {
-      console.log($(this).attr('destrow').toString() + '=' +
-        Math.floor(($(this).html() - 1) / GRID_SIZE).toString());
 
-      console.log($(this).attr('destcol').toString() + '=' +
-          ($(this).html() - 1) % GRID_SIZE.toString());
+      var destRow = Math.floor(($(this).attr('val') - 1) / GRID_SIZE);
+      var destCol = ($(this).attr('val') - 1) % GRID_SIZE;
 
-      if ($(this).attr('destrow') != $(this).attr('currrow') ||
-          $(this).attr('destcol') != $(this).attr('currcol')) {
+      if (destRow != $(this).attr('currrow') ||
+          destCol != $(this).attr('currcol')) {
         w = false;
       }
     });
