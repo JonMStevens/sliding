@@ -1,8 +1,7 @@
 // todo:
-// allow for shifting multiple squres at once
 // timer
 // move counter
-// win check without button
+// win check without button (check when empty space moves into correct pos?)
 // research screen reader stuff
 // change square color when in correct position
 // make sliding look nice
@@ -27,7 +26,6 @@ function createBoard() {
   var squareArr = new Array(GRID_SIZE * GRID_SIZE);
   for (var row = 0; row < GRID_SIZE; row++) {
     for (var col = 0; col < GRID_SIZE; col++) {
-      // squares are in correct order mark the intended/destination position
       var val = (GRID_SIZE * row + col + 1);
       squareArr[GRID_SIZE * row + col] =
         $('<button  class=\'puzzle-square\'>' + val + '</button>');
@@ -60,10 +58,7 @@ function squaresOnClick(event) {
   var emptyC = $empty.attr('currcol');
 
   // check if clicked square was the empty square
-  if (clickedR === emptyR && clickedC === emptyC) { return; }
-
-  // check if clicked square is adjacent to empty
-  if ((Math.abs(clickedR - emptyR) + Math.abs(clickedC - emptyC)) > 1) {
+  if (clickedR === emptyR && clickedC === emptyC) {
     return;
   }
 
@@ -78,7 +73,6 @@ function slide($clicked, $empty) {
   // right slide
   if ($clicked.attr('currrow') == $empty.attr('currrow') &&
       $clicked.attr('currcol') < $empty.attr('currcol')) {
-
     /* 	select squares to
     $toMove starts with $clicked
     includes all squares to the right of $clicked and to the left of $empty
@@ -92,10 +86,9 @@ function slide($clicked, $empty) {
     slideSquares($toMove.toArray(), 'right');
   }
 
-    // left slide
+  // left slide
   else if ($clicked.attr('currrow') == $empty.attr('currrow') &&
     $clicked.attr('currcol') > $empty.attr('currcol')) {
-
     /* 	select squares to move
     $toMove starts with $empty,
     includes all squares to the right of $empty and to the left of $clicked,
@@ -112,7 +105,6 @@ function slide($clicked, $empty) {
   // up slide
   else if ($clicked.attr('currcol') == $empty.attr('currcol') &&
         $clicked.attr('currrow') > $empty.attr('currrow')) {
-
     /* 	select squares to move
     $toMove starts with $clicked,
     includes all squares to above $clicked and beneath $empty,
@@ -125,10 +117,9 @@ function slide($clicked, $empty) {
 
     slideSquares($toMove.toArray(), 'up');
   }
-    // down slide
+  // down slide
   else if ($clicked.attr('currcol') == $empty.attr('currcol') &&
         $clicked.attr('currrow') < $empty.attr('currrow')) {
-
     /* 	select squares to move
     $toMove starts with $empty,
     includes all squares above $empty and beneath $clicked,
@@ -146,22 +137,23 @@ function slide($clicked, $empty) {
   $clicked.addClass('empty-square');
 }
 
+/* arr is an array of squares that need to be slid by 1
+   dir is direction they should be slid (up/down/left/right) */
 function slideSquares(arr, dir) {
+  if (dir == 'right' || dir == 'down') {
+    arr.reverse();
+  }
+
   var temp = [$(arr[0]).attr('val'),
-    $(arr[0]).attr('currrow'),
-    $(arr[0]).attr('currcol'),
     $(arr[0]).html()];
 
-  $(arr[0]).attr('val', $(arr[arr.length - 1]).attr('val'));
-  //$(arr[0]).attr('currrow',$(arr[arr.length - 1]).attr('currrow'));
-  //$(arr[0]).attr('currcol',$(arr[arr.length - 1]).attr('currcol'));
-  $(arr[0]).html($(arr[arr.length - 1]).html());
+  for (var i = 0; i < arr.length - 1; i++) {
+    $(arr[i]).attr('val', $(arr[i + 1]).attr('val'));
+    $(arr[i]).html($(arr[i + 1]).html());
+  }
 
   $(arr[arr.length - 1]).attr('val', temp[0]);
-  //$(arr[arr.length - 1]).attr('currrow',temp[1]);
-  //$(arr[arr.length - 1]).attr('currcol',temp[2]);
-  $(arr[arr.length - 1]).html(temp[3]);
-
+  $(arr[arr.length - 1]).html(temp[1]);
 }
 
 function alertWin() {
