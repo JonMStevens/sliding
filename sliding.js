@@ -5,10 +5,19 @@
 // research screen reader stuff
 // change square color when in correct position
 // make sliding look nice
+// prevent highlighting replacing clicking
+
 const GRID_SIZE = 4;
+
+/* ONE_CLICK_ONE_MOVE:
+   true: increment the move counter by one with each move,
+     even if that move slides multiple squares
+   false: increment the counter by the number of squres moved with each click */
+const ONE_CLICK_ONE_MOVE = true;
+
 $(function() {
   createBoard();
-  $('#btnCheckWin').click(alertWin);
+  $('#btn-check-win').click(alertWin);
 });
 
 function createBoard() {
@@ -135,6 +144,12 @@ function slide($clicked, $empty) {
 
   $empty.removeClass('empty-square');
   $clicked.addClass('empty-square');
+
+  // if we moved tiles increment move counter
+  if ($toMove) {
+    /* - 1 because $toMove includes moved squares and empty square */
+    updateMoveCounter($toMove.length - 1);
+  }
 }
 
 /* arr is an array of squares that need to be slid by 1
@@ -198,4 +213,12 @@ function shuffleArray(array) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
+}
+
+function updateMoveCounter(numMoved) {
+  var $counter = $('#move-count');
+  if (ONE_CLICK_ONE_MOVE) {
+    numMoved = 1;
+  }
+  $counter.html((parseInt($counter.html()) + numMoved).toString());
 }

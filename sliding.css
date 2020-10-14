@@ -38,8 +38,17 @@ button:active {
   transform: scale(0.99);
 }
 
-#btnCheckWin {
+#btn-check-win {
   color: black;
   background: pink;
   outline: 1px solid black;
+}
+
+.counter-label {
+  font-family: sans-serif;
+}
+
+.counter {
+  font-family: sans-serif;
+  font-size: 2em;
 }
