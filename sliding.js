@@ -1,10 +1,11 @@
 // todo:
-// change win checker so function will stop looping when we determine no win
 // allow for shifting multiple squres at once
 // timer
 // move counter
 // win check without button
 // research screen reader stuff
+// change square color when in correct position
+// make sliding look nice
 const GRID_SIZE = 4;
 $(function() {
   createBoard();
@@ -167,24 +168,35 @@ function alertWin() {
   alert(isWin() ? 'win' : 'no win');
 }
 
+/* for each square calculate which in row and column the square will end up
+     when the game is won.
+  if any square is not its correct row and column the game is not yet won.
+  if no square is out of place the game is won. */
 function isWin() {
-  /* for each square calculate which row and column the square will end up
-       in when the game is won
-    if a square is not its correct row and column the game is not yet won
-    if no square is out of place the game is won */
-  var w = true;
-  $('.puzzle-square').each(function() {
+  var squares = $('.puzzle-square');
 
-      var destRow = Math.floor(($(this).attr('val') - 1) / GRID_SIZE);
-      var destCol = ($(this).attr('val') - 1) % GRID_SIZE;
+  /*  in each iteration check the ith square and the ith from last.
+      since most of the time this puzzle will be solved in order or in reverse
+        this should more quickly find if part of the puzzle is out of order */
+  for (var i = 0; 2 * i < squares.length - 1; i++) {
+    if (!confirmSquareLocation(squares[i]) ||
+      !confirmSquareLocation(squares[squares.length - (1 + i)])) {
+      return false;
+    }
+  }
 
-      if (destRow != $(this).attr('currrow') ||
-          destCol != $(this).attr('currcol')) {
-        w = false;
-      }
-    });
+  return true;
+}
 
-  return w;
+/*calculate in which row and column the square will end up
+     when the game is won.
+  return true if square is in that position else return false*/
+function confirmSquareLocation(square) {
+  var destRow = Math.floor(($(square).attr('val') - 1) / GRID_SIZE);
+  var destCol = ($(square).attr('val') - 1) % GRID_SIZE;
+
+  return destRow == $(square).attr('currrow') &&
+    destCol == $(square).attr('currcol');
 }
 
 /* stolen:
