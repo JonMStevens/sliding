@@ -44,11 +44,14 @@ button:active {
   outline: 1px solid black;
 }
 
-.counter-label {
+.counter {
   font-family: sans-serif;
 }
 
-.counter {
-  font-family: sans-serif;
+.counter-num {
   font-size: 2em;
+}
+
+.counter:not(:last-of-type) {
+  margin-right: 20px;
 }

@@ -1,11 +1,10 @@
 // todo:
-// timer
-// move counter
 // win check without button (check when empty space moves into correct pos?)
 // research screen reader stuff
 // change square color when in correct position
 // make sliding look nice
 // prevent highlighting replacing clicking
+// should shrink down on smaller screens
 
 const GRID_SIZE = 4;
 
@@ -18,6 +17,7 @@ const ONE_CLICK_ONE_MOVE = true;
 $(function() {
   createBoard();
   $('#btn-check-win').click(alertWin);
+  startTimer();
 });
 
 function createBoard() {
@@ -172,7 +172,12 @@ function slideSquares(arr, dir) {
 }
 
 function alertWin() {
-  alert(isWin() ? 'win' : 'no win');
+  if (isWin()) {
+    stopTimer();
+    alert('win with time of ' + getTime());
+  } else {
+    alert('no win');
+  }
 }
 
 /* for each square calculate which in row and column the square will end up
@@ -221,4 +226,29 @@ function updateMoveCounter(numMoved) {
     numMoved = 1;
   }
   $counter.html((parseInt($counter.html()) + numMoved).toString());
+}
+
+var secondsElapsed = 0;
+var timerInterval = null;
+function startTimer() {
+  timerInterval = window.setInterval(updateTimer, 1000);
+}
+
+function stopTimer() {
+  window.clearInterval(timerInterval);
+}
+
+function updateTimer() {
+  secondsElapsed++;
+  $('#timer').html(getTime());
+}
+
+/* returns string with current time broken into seconds, minutes, and hours */
+function getTime() {
+  let minutesElapsed = Math.floor(secondsElapsed / 60) % 60;
+  let hoursElapsed = Math.floor(secondsElapsed / 3600);
+
+  return (hoursElapsed ? hoursElapsed.toString() + 'h ' : '') +
+  (minutesElapsed || hoursElapsed ? minutesElapsed.toString() + 'm ' : '')  +
+  (secondsElapsed % 60).toString() + 's';;
 }
