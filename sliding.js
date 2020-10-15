@@ -2,6 +2,8 @@
 // win check without button (check when empty space moves into correct pos?)
 // research screen reader stuff
 // change square color when in correct position
+//    (add css rules in code like [val='1'][currow='0'][currcol='1'])
+//    (just do .css when square moves to the right spot)
 // make sliding look nice
 // prevent highlighting replacing clicking
 // should shrink down on smaller screens
@@ -16,7 +18,6 @@ const ONE_CLICK_ONE_MOVE = true;
 
 $(function() {
   createBoard();
-  $('#btn-check-win').click(alertWin);
   startTimer();
 });
 
@@ -75,6 +76,11 @@ function squaresOnClick(event) {
   // if so then we have room to slide into the empty square
   if (clickedR === emptyR || clickedC === emptyC) {
     slide($(this), $empty);
+
+    if (confirmSquareLocation($empty)) {
+      // setTimeout prevents win alert from firing before slide is complete
+      setTimeout(checkWin, 0);
+    }
   }
 }
 function slide($clicked, $empty) {
@@ -171,12 +177,11 @@ function slideSquares(arr, dir) {
   $(arr[arr.length - 1]).html(temp[1]);
 }
 
-function alertWin() {
+function checkWin() {
   if (isWin()) {
-    stopTimer();
-    alert('win with time of ' + getTime());
+    doWin();
   } else {
-    alert('no win');
+    doNoWin();
   }
 }
 
@@ -209,6 +214,15 @@ function confirmSquareLocation(square) {
 
   return destRow == $(square).attr('currrow') &&
     destCol == $(square).attr('currcol');
+}
+
+function doWin() {
+  stopTimer();
+  alert('win! time: ' + getTime());
+}
+
+function doNoWin() {
+
 }
 
 /* stolen:
