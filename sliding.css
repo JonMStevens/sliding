@@ -1,18 +1,31 @@
+.sr-only {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 #puzzle-container {
   width: 90vh;
   height: 90vh;
   margin: auto;
   display: grid;
+  background-color: white;
+  color: white;
 }
 
 .puzzle-square {
   margin: 10px 10px 10px 10px;
+  padding: 1px 1px 1px 1px;
   background-color: black;
 }
 
 .puzzle-square.empty-square {
-  background-color: pink;
-  visibility: hidden;
+  background-color: inherit;
+  color: inherit;
+  visibility: visible;
 }
 
 button {
@@ -23,19 +36,16 @@ button {
   text-decoration: none;
   color: #fff;
   font-family: sans-serif;
-  font-size: 1rem;
+  font-size: 3rem;
   cursor: pointer;
   text-align: center;
   -webkit-appearance: none;
   -moz-appearance: none;
 }
 
-button:focus {
-  outline: none;
-}
-
+button:focus,
 button:active {
-  transform: scale(0.99);
+  outline: 7px dashed black;
 }
 
 #btn-check-win {

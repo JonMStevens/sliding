@@ -1,13 +1,12 @@
 // todo:
-// win check without button (check when empty space moves into correct pos?)
-// research screen reader stuff
 // change square color when in correct position
 //    (add css rules in code like [val='1'][currow='0'][currcol='1'])
 //    (just do .css when square moves to the right spot)
 // make sliding look nice
 // prevent highlighting replacing clicking
 // should shrink down on smaller screens
-
+// arrow key controls
+// don't start timer until the first move
 const GRID_SIZE = 4;
 
 /* ONE_CLICK_ONE_MOVE:
@@ -18,6 +17,7 @@ const ONE_CLICK_ONE_MOVE = true;
 
 $(function() {
   createBoard();
+  setPuzzleDesc();
   startTimer();
 });
 
@@ -44,6 +44,7 @@ function createBoard() {
   }
 
   squareArr[squareArr.length - 1].addClass('empty-square');
+  squareArr[squareArr.length - 1].html('blank square');
 
   // randomize square order, will be added to the grid in this random order
   shuffleArray(squareArr);
@@ -76,7 +77,7 @@ function squaresOnClick(event) {
   // if so then we have room to slide into the empty square
   if (clickedR === emptyR || clickedC === emptyC) {
     slide($(this), $empty);
-
+    setPuzzleDesc();
     if (confirmSquareLocation($empty)) {
       // setTimeout prevents win alert from firing before slide is complete
       setTimeout(checkWin, 0);
@@ -265,4 +266,18 @@ function getTime() {
   return (hoursElapsed ? hoursElapsed.toString() + 'h ' : '') +
   (minutesElapsed || hoursElapsed ? minutesElapsed.toString() + 'm ' : '')  +
   (secondsElapsed % 60).toString() + 's';;
+}
+
+function setPuzzleDesc() {
+  let $puzzleDesc = $('#puzzle-desc');
+  let $squares = $('.puzzle-square');
+  let txt = '';
+  $squares.each(function(index) {
+    if (index % GRID_SIZE == 0) {
+      txt += 'Row ' + (Math.floor(index / GRID_SIZE) + 1).toString() + ' ';
+
+    }
+    txt += $(this).html() + ' ';
+  });
+  $puzzleDesc.html(txt);
 }
