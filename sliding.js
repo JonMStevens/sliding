@@ -1,7 +1,4 @@
 // todo:
-// change square color when in correct position
-//    (add css rules in code like [val='1'][currow='0'][currcol='1'])
-//    (just do .css when square moves to the right spot)
 // make sliding look nice
 // prevent highlighting replacing clicking
 // should shrink down on smaller screens
@@ -17,6 +14,15 @@ const ONE_CLICK_ONE_MOVE = true;
 $(function() {
   createBoard();
   setPuzzleDesc();
+
+  // create rules to change style when square is in the correct position
+  for (var i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+    $('<style type=\'text/css\'>.puzzle-square[val=\'' + (i + 1) + '\']' +
+    '[currrow=\'' + getDestRow(i + 1) + '\'][currcol=\'' +
+      getDestCol(i + 1) + '\']' + '{ background-color:#fb3fd685; }' +
+      '</style>').appendTo('head');
+  }
+
 });
 
 function createBoard() {
@@ -72,7 +78,7 @@ function squaresOnClick(event) {
   }
 
   // check if clicked square is in the same row or column as the empty square
-  // if so then we have room to slide into the empty square
+  // if so then we have room to slide into the empty square, valid click
   if (clickedR === emptyR || clickedC === emptyC) {
     slide($(this), $empty);
     setPuzzleDesc();
@@ -210,11 +216,18 @@ function isWin() {
      when the game is won.
   return true if square is in that position else return false*/
 function confirmSquareLocation(square) {
-  var destRow = Math.floor(($(square).attr('val') - 1) / GRID_SIZE);
-  var destCol = ($(square).attr('val') - 1) % GRID_SIZE;
+  var val = $(square).attr('val');
 
-  return destRow == $(square).attr('currrow') &&
-    destCol == $(square).attr('currcol');
+  return getDestRow(val) == $(square).attr('currrow') &&
+    getDestCol(val) == $(square).attr('currcol');
+}
+
+function getDestRow(val) {
+  return Math.floor((val - 1) / GRID_SIZE);
+}
+
+function getDestCol(val) {
+  return (val - 1) % GRID_SIZE;
 }
 
 function doWin() {
