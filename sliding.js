@@ -6,7 +6,6 @@
 // prevent highlighting replacing clicking
 // should shrink down on smaller screens
 // arrow key controls
-// don't start timer until the first move
 const GRID_SIZE = 4;
 
 /* ONE_CLICK_ONE_MOVE:
@@ -18,7 +17,6 @@ const ONE_CLICK_ONE_MOVE = true;
 $(function() {
   createBoard();
   setPuzzleDesc();
-  startTimer();
 });
 
 function createBoard() {
@@ -78,6 +76,8 @@ function squaresOnClick(event) {
   if (clickedR === emptyR || clickedC === emptyC) {
     slide($(this), $empty);
     setPuzzleDesc();
+    startTimer();
+
     if (confirmSquareLocation($empty)) {
       // setTimeout prevents win alert from firing before slide is complete
       setTimeout(checkWin, 0);
@@ -246,11 +246,18 @@ function updateMoveCounter(numMoved) {
 var secondsElapsed = 0;
 var timerInterval = null;
 function startTimer() {
-  timerInterval = window.setInterval(updateTimer, 1000);
+  if (!timerIsRunning()) {
+    timerInterval = window.setInterval(updateTimer, 1000);
+  }
 }
 
 function stopTimer() {
   window.clearInterval(timerInterval);
+  timerInterval = null;
+}
+
+function timerIsRunning() {
+  return timerInterval ? true : false;
 }
 
 function updateTimer() {
