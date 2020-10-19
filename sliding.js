@@ -17,8 +17,8 @@ $(function() {
 
   // create rules to change style when square is in the correct position
   for (var i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-    $('<style type=\'text/css\'>.puzzle-square[val=\'' + (i + 1) + '\']' +
-    '[currrow=\'' + getDestRow(i + 1) + '\'][currcol=\'' +
+    $('<style type=\'text/css\'>.puzzle-square:not(.empty-square)[val=\'' +
+    (i + 1) + '\']' + '[currrow=\'' + getDestRow(i + 1) + '\'][currcol=\'' +
       getDestCol(i + 1) + '\']' + '{ background-color:#fb3fd685; }' +
       '</style>').appendTo('head');
   }
@@ -86,6 +86,7 @@ function squaresOnClick(event) {
 
     if (confirmSquareLocation($empty)) {
       // setTimeout prevents win alert from firing before slide is complete
+      // todo this doesn't seem to be working right
       setTimeout(checkWin, 0);
     }
   }
