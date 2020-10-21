@@ -1,7 +1,7 @@
 // todo:
 // make sliding look nice
 // prevent highlighting replacing clicking
-// should shrink down on smaller screens
+// fix font and reduce space when doing a really large puzzle like 16x16
 // arrow key controls
 const GRID_SIZE = 4;
 
@@ -30,11 +30,9 @@ function createBoard() {
 
   // set grid size
   $puzzleContainer.css('grid-template-columns', 'repeat(' +
-    GRID_SIZE.toString() + ', 1fr)');
-  $puzzleContainer.css('grid-template-columns', 'repeat(' +
-    GRID_SIZE.toString() + ', 1fr)');
+    GRID_SIZE.toString() + ', minmax(0, 1fr))');
   $puzzleContainer.css('grid-template-rows', 'repeat(' +
-    GRID_SIZE.toString() + ', 1fr)');
+    GRID_SIZE.toString() + ', minmax(0, 1fr))');
 
   // create  squares
   var squareArr = new Array(GRID_SIZE * GRID_SIZE);
