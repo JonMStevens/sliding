@@ -1,6 +1,5 @@
 // todo:
 // make sliding look nice
-// prevent highlighting replacing clicking
 // fix font and reduce space when doing a really large puzzle like 16x16
 // arrow key controls
 const GRID_SIZE = 4;
@@ -57,13 +56,13 @@ function createBoard() {
     squareArr[i].attr('currcol', Math.floor(i % GRID_SIZE));
 
     // give onclick event and square is ready to be put onto grid
-    squareArr[i].click(squaresOnClick);
+    squareArr[i].mousedown(squaresOnMouseDown);
     $puzzleContainer.append(squareArr[i]);
   }
 
 }
 
-function squaresOnClick(event) {
+function squaresOnMouseDown(event) {
   var $empty = $('.empty-square');
   var clickedR = $(this).attr('currrow');
   var clickedC = $(this).attr('currcol');
