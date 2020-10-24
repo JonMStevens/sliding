@@ -2,7 +2,7 @@
 // make sliding look nice
 // fix font and reduce space when doing a really large puzzle like 16x16
 // arrow key controls
-const GRID_SIZE = 4;
+const GRID_SIZE = 2;
 
 /* ONE_CLICK_ONE_MOVE:
    true: increment the move counter by one with each move,
@@ -17,8 +17,8 @@ $(function() {
   // create rules to change style when square is in the correct position
   for (var i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
     $('<style type=\'text/css\'>.puzzle-square:not(.empty-square)[val=\'' +
-    (i + 1) + '\']' + '[currrow=\'' + getDestRow(i + 1) + '\'][currcol=\'' +
-      getDestCol(i + 1) + '\']' + '{ background-color:#fb3fd685; }' +
+    (i + 1) + '\']' + '[currrow=\'' + getRowByVal(i + 1) + '\'][currcol=\'' +
+      getColByVal(i + 1) + '\']' + '{ background-color:#fb3fd685; }' +
       '</style>').appendTo('head');
   }
 
@@ -216,15 +216,15 @@ function isWin() {
 function confirmSquareLocation(square) {
   var val = $(square).attr('val');
 
-  return getDestRow(val) == $(square).attr('currrow') &&
-    getDestCol(val) == $(square).attr('currcol');
+  return getRowByVal(val) == $(square).attr('currrow') &&
+    getColByVal(val) == $(square).attr('currcol');
 }
 
-function getDestRow(val) {
+function getRowByVal(val) {
   return Math.floor((val - 1) / GRID_SIZE);
 }
 
-function getDestCol(val) {
+function getColByVal(val) {
   return (val - 1) % GRID_SIZE;
 }
 
