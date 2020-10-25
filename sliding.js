@@ -1,8 +1,10 @@
 // todo:
-// make sliding look nice
 // fix font and reduce space when doing a really large puzzle like 16x16
 // arrow key controls
-const GRID_SIZE = 2;
+// check if puzzle starts solved after puzzle is shuffled
+// replace currcol,currrow with one value
+// find out if animation can continue while alert is on screen
+const GRID_SIZE = 4;
 
 /* ONE_CLICK_ONE_MOVE:
    true: increment the move counter by one with each move,
@@ -54,6 +56,9 @@ function createBoard() {
     // mark current position in grid
     squareArr[i].attr('currrow', Math.floor(i / GRID_SIZE));
     squareArr[i].attr('currcol', Math.floor(i % GRID_SIZE));
+
+    // mark starting position for css translation
+    squareArr[i].attr('startPosVal', i + 1);
 
     // give onclick event and square is ready to be put onto grid
     squareArr[i].mousedown(squaresOnMouseDown);
@@ -153,9 +158,6 @@ function slide($clicked, $empty) {
     slideSquares($toMove.toArray(), 'down');
   }
 
-  $empty.removeClass('empty-square');
-  $clicked.addClass('empty-square');
-
   // if we moved tiles increment move counter
   if ($toMove) {
     /* - 1 because $toMove includes moved squares and empty square */
@@ -164,22 +166,47 @@ function slide($clicked, $empty) {
 }
 
 /* arr is an array of squares that need to be slid by 1
-   dir is direction they should be slid (up/down/left/right) */
+   dir is direction they should be slid (up/down/left/right)
+   first change either currrow or currcol for each square
+   move empty square to whichever end it now belongs depending on dir
+   do all transitions so that squares appear in the right location
+    */
 function slideSquares(arr, dir) {
-  if (dir == 'right' || dir == 'down') {
-    arr.reverse();
+  var currVals = [];
+  var sign = (dir == 'up' || dir == 'left') ? -1 : 1;
+  var changeAttr = (dir == 'up' || dir == 'down') ? 'currrow' : 'currcol';
+  for (var i = 0; i < arr.length; i++) {
+    var curr = parseInt($(arr[i]).attr(changeAttr));
+    currVals.push(curr);
+    $(arr[i]).attr(changeAttr, curr + (1 * sign));
   }
 
-  var temp = [$(arr[0]).attr('val'),
-    $(arr[0]).html()];
+  $('.empty-square').attr(changeAttr,
+    sign > 0 ? Math.min(...currVals) : Math.max(...currVals));
 
-  for (var i = 0; i < arr.length - 1; i++) {
-    $(arr[i]).attr('val', $(arr[i + 1]).attr('val'));
-    $(arr[i]).html($(arr[i + 1]).html());
+  for (var i = 0; i < arr.length; i++) {
+    $(arr[i]).css({'transform': getTranslateString($(arr[i]), dir)});
   }
+}
 
-  $(arr[arr.length - 1]).attr('val', temp[0]);
-  $(arr[arr.length - 1]).html(temp[1]);
+/* returns transform css value string */
+function getTranslateString($square, dir) {
+  var squareMargin =
+    parseInt($('.puzzle-square').css('margin').replace('px', ''));
+  var ret = 'translate(calc({0} + {1}), calc({2} + {3}))';
+  var distX = $square.attr('currcol') -
+    getColByVal($square.attr('startPosVal'));
+  var distY = $square.attr('currrow') -
+    getRowByVal($square.attr('startPosVal'));
+
+  ret = ret.replace('{0}', distX.toString() + '00%');
+  ret = ret.replace('{1}', distX ?
+    (squareMargin * (Math.sign(distX) * 1 + distX)).toString() + 'px' : '0px');
+  ret = ret.replace('{2}', distY.toString() + '00%');
+  ret = ret.replace('{3}', distY ?
+    (squareMargin * (Math.sign(distY) * 1 + distY)).toString() + 'px' : '0px');
+
+  return ret;
 }
 
 function checkWin() {
