@@ -93,6 +93,7 @@ function squaresOnMouseDown(event) {
     }
   }
 }
+
 function slide($clicked, $empty) {
   var $toMove = null;
   // right slide
@@ -201,10 +202,10 @@ function getTranslateString($square, dir) {
 
   ret = ret.replace('{0}', distX.toString() + '00%');
   ret = ret.replace('{1}', distX ?
-    (squareMargin * (Math.sign(distX) * 1 + distX)).toString() + 'px' : '0px');
+    (2 * squareMargin * distX).toString() + 'px' : '0px');
   ret = ret.replace('{2}', distY.toString() + '00%');
   ret = ret.replace('{3}', distY ?
-    (squareMargin * (Math.sign(distY) * 1 + distY)).toString() + 'px' : '0px');
+    (2 * squareMargin * distY).toString() + 'px' : '0px');
 
   return ret;
 }
