@@ -1,6 +1,5 @@
 // todo:
 // fix font and reduce space when doing a really large puzzle like 16x16
-// arrow key controls
 // replace currcol,currrow with one value
 // find out if animation can continue while alert is on screen
 const GRID_SIZE = 4;
@@ -11,9 +10,21 @@ const GRID_SIZE = 4;
    false: increment the counter by the number of squres moved with each click */
 const ONE_CLICK_ONE_MOVE = true;
 
+/* delete me */
+const randomColor = () => {
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    const random = Math.random();
+    const bit = (random * 16) | 0;
+    color += (bit).toString(16);
+  };
+  return color;
+};
+
 $(function() {
   createBoard();
   setPuzzleDesc();
+  createKeyBindings();
 
   // create rules to change style when square is in the correct position
   for (var i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
@@ -158,6 +169,8 @@ function slide($clicked, $empty) {
    move empty square to whichever end it now belongs depending on dir
    do all transitions so that squares appear in the right location
     */
+
+/* todo can we check if clicked square is adj to empty for speed at all */
 function slideSquares(arr, dir) {
   var currVals = [];
   var sign = (dir == 'up' || dir == 'left') ? -1 : 1;
@@ -194,6 +207,45 @@ function getTranslateString($square, dir) {
     (2 * squareMargin * distY).toString() + 'px' : '0px');
 
   return ret;
+}
+
+function createKeyBindings() {
+  var $empty = $('.empty-square');
+  $(document).keyup(function(e) {
+    var $adj = null;
+    switch (e.keyCode) {
+      case 37:
+        //left
+        $adj = $('.puzzle-square[currrow = \'' +
+          $empty.attr('currrow') + '\'][currcol=\'' +
+          (parseInt($empty.attr('currcol')) - 1).toString() + '\']');
+      break;
+      case 38:
+        //up
+        $adj = $('.puzzle-square[currcol = \'' +
+          $empty.attr('currcol') + '\'][currrow=\'' +
+          (parseInt($empty.attr('currrow')) - 1).toString() + '\']');
+      break;
+      case 39:
+        //right
+        $adj = $('.puzzle-square[currrow = \'' +
+          $empty.attr('currrow') + '\'][currcol=\'' +
+          (parseInt($empty.attr('currcol')) + 1).toString() + '\']');
+      break;
+      case 40:
+        //down
+        $adj = $('.puzzle-square[currcol = \'' +
+          $empty.attr('currcol') + '\'][currrow=\'' +
+          (parseInt($empty.attr('currrow')) + 1).toString() + '\']');
+      break;
+      default:
+        return; // do not do anything if key was not an arrow
+    }
+
+    if ($adj.length) {
+      $adj.mousedown();
+    }
+  });
 }
 
 function checkWin() {
