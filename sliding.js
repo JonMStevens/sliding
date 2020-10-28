@@ -10,17 +10,6 @@ const GRID_SIZE = 4;
    false: increment the counter by the number of squres moved with each click */
 const ONE_CLICK_ONE_MOVE = true;
 
-/* delete me */
-const randomColor = () => {
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    const random = Math.random();
-    const bit = (random * 16) | 0;
-    color += (bit).toString(16);
-  };
-  return color;
-};
-
 $(function() {
   createBoard();
   setPuzzleDesc();
