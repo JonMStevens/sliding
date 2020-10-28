@@ -2,6 +2,7 @@
 // fix font and reduce space when doing a really large puzzle like 16x16
 // replace currcol,currrow with one value
 // find out if animation can continue while alert is on screen
+// puzzle research: is every configuration solvable?
 const GRID_SIZE = 4;
 
 /* ONE_CLICK_ONE_MOVE:
@@ -161,12 +162,12 @@ function slide($clicked, $empty) {
 
 /* todo can we check if clicked square is adj to empty for speed at all */
 function slideSquares(arr, dir) {
-  var currVals = [];
+  var currVals = new Array(arr.length);
   var sign = (dir == 'up' || dir == 'left') ? -1 : 1;
   var changeAttr = (dir == 'up' || dir == 'down') ? 'currrow' : 'currcol';
   for (var i = 0; i < arr.length; i++) {
     var curr = parseInt($(arr[i]).attr(changeAttr));
-    currVals.push(curr);
+    currVals[i] = curr;
     $(arr[i]).attr(changeAttr, curr + (1 * sign));
   }
 
@@ -232,6 +233,7 @@ function createKeyBindings() {
     }
 
     if ($adj.length) {
+      $adj.focus();
       $adj.mousedown();
     }
   });
