@@ -75,6 +75,66 @@ function createBoard() {
   }
 }
 
+function setPuzzleDesc() {
+  let $puzzleDesc = $('#puzzle-desc');
+  let $squares = $('.puzzle-square');
+  let txt = '';
+  $squares.each(function(index) {
+    if (index % GRID_SIZE == 0) {
+      txt += 'Row ' + (Math.floor(index / GRID_SIZE) + 1).toString() + ' ';
+
+    }
+    txt += $(this).html() + ' ';
+  });
+  $puzzleDesc.html(txt);
+}
+
+function createKeyBindings() {
+  $(document).keyup(squareOnKeyUp);
+}
+
+function deleteKeyBindings() {
+  $(document).off('keyup', squareOnKeyUp);
+}
+
+function squareOnKeyUp(event) {
+  var $empty = $('.empty-square');
+  var $adj = null;
+  switch (event.keyCode) {
+    case 37:
+      //left
+      $adj = $('.puzzle-square[currrow = \'' +
+        $empty.attr('currrow') + '\'][currcol=\'' +
+        (parseInt($empty.attr('currcol')) - 1).toString() + '\']');
+    break;
+    case 38:
+      //up
+      $adj = $('.puzzle-square[currcol = \'' +
+        $empty.attr('currcol') + '\'][currrow=\'' +
+        (parseInt($empty.attr('currrow')) - 1).toString() + '\']');
+    break;
+    case 39:
+      //right
+      $adj = $('.puzzle-square[currrow = \'' +
+        $empty.attr('currrow') + '\'][currcol=\'' +
+        (parseInt($empty.attr('currcol')) + 1).toString() + '\']');
+    break;
+    case 40:
+      //down
+      $adj = $('.puzzle-square[currcol = \'' +
+        $empty.attr('currcol') + '\'][currrow=\'' +
+        (parseInt($empty.attr('currrow')) + 1).toString() + '\']');
+    break;
+    default:
+      return; // do not do anything if key was not an arrow
+  }
+
+  if ($adj.length) {
+    $adj.focus();
+    $adj.mousedown();
+  }
+}
+
 function squaresOnMouseDown(event) {
   var $empty = $('.empty-square');
   var clickedR = $(this).attr('currrow');
@@ -199,46 +259,6 @@ function getTranslateString($square, dir) {
   return ret;
 }
 
-function createKeyBindings() {
-  var $empty = $('.empty-square');
-  $(document).keyup(function(e) {
-    var $adj = null;
-    switch (e.keyCode) {
-      case 37:
-        //left
-        $adj = $('.puzzle-square[currrow = \'' +
-          $empty.attr('currrow') + '\'][currcol=\'' +
-          (parseInt($empty.attr('currcol')) - 1).toString() + '\']');
-      break;
-      case 38:
-        //up
-        $adj = $('.puzzle-square[currcol = \'' +
-          $empty.attr('currcol') + '\'][currrow=\'' +
-          (parseInt($empty.attr('currrow')) - 1).toString() + '\']');
-      break;
-      case 39:
-        //right
-        $adj = $('.puzzle-square[currrow = \'' +
-          $empty.attr('currrow') + '\'][currcol=\'' +
-          (parseInt($empty.attr('currcol')) + 1).toString() + '\']');
-      break;
-      case 40:
-        //down
-        $adj = $('.puzzle-square[currcol = \'' +
-          $empty.attr('currcol') + '\'][currrow=\'' +
-          (parseInt($empty.attr('currrow')) + 1).toString() + '\']');
-      break;
-      default:
-        return; // do not do anything if key was not an arrow
-    }
-
-    if ($adj.length) {
-      $adj.focus();
-      $adj.mousedown();
-    }
-  });
-}
-
 function checkWin() {
   if (isWin()) {
     doWin();
@@ -353,18 +373,4 @@ function resetTimer() {
   stopTimer();
   secondsElapsed = 0;
   $('#timer').html(getTime());
-}
-
-function setPuzzleDesc() {
-  let $puzzleDesc = $('#puzzle-desc');
-  let $squares = $('.puzzle-square');
-  let txt = '';
-  $squares.each(function(index) {
-    if (index % GRID_SIZE == 0) {
-      txt += 'Row ' + (Math.floor(index / GRID_SIZE) + 1).toString() + ' ';
-
-    }
-    txt += $(this).html() + ' ';
-  });
-  $puzzleDesc.html(txt);
 }
