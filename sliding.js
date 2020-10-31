@@ -14,16 +14,8 @@ const ONE_CLICK_ONE_MOVE = true;
 $(function() {
   createBoard();
   setPuzzleDesc();
+  createCorrectPosStyles();
   createKeyBindings();
-
-  // create rules to change style when square is in the correct position
-  for (var i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-    $('<style type=\'text/css\'>.puzzle-square:not(.empty-square)[val=\'' +
-    (i + 1) + '\']' + '[currrow=\'' + getRowByVal(i + 1) + '\'][currcol=\'' +
-      getColByVal(i + 1) + '\']' + '{ background-color:#fb3fd685; }' +
-      '</style>').appendTo('head');
-  }
-
 });
 
 function createBoard() {
@@ -87,6 +79,21 @@ function setPuzzleDesc() {
     txt += $(this).html() + ' ';
   });
   $puzzleDesc.html(txt);
+}
+
+function createCorrectPosStyles() {
+  // create rules to change style when square is in the correct position
+  for (var i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+    $('<style type=\'text/css\' id=\'correctPosStyle' + i.toString() +
+    '\'>.puzzle-square:not(.empty-square)[val=\'' + (i + 1) + '\']' +
+    '[currrow=\'' + getRowByVal(i + 1) + '\'][currcol=\'' +
+    getColByVal(i + 1) + '\']' + '{ background-color:#fb3fd685; }' +
+    '</style>').appendTo('head');
+  }
+}
+
+function deleteCorrectPosStyles() {
+  $('[id^=correctPosStyle]').remove();
 }
 
 function createKeyBindings() {
