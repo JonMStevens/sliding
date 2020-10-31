@@ -303,12 +303,18 @@ function shuffleArray(array) {
   }
 }
 
+var moveCount = 0;
 function updateMoveCounter(numMoved) {
-  var $counter = $('#move-count');
   if (ONE_CLICK_ONE_MOVE) {
     numMoved = 1;
   }
-  $counter.html((parseInt($counter.html()) + numMoved).toString());
+  moveCount = moveCount + numMoved;
+  $('#move-count').html(moveCount.toString());
+}
+
+function resetMoveCounter() {
+  moveCount = 0;
+  $('#move-count').html('0');
 }
 
 var secondsElapsed = 0;
@@ -328,11 +334,6 @@ function timerIsRunning() {
   return timerInterval ? true : false;
 }
 
-function updateTimer() {
-  secondsElapsed++;
-  $('#timer').html(getTime());
-}
-
 /* returns string with current time broken into seconds, minutes, and hours */
 function getTime() {
   let minutesElapsed = Math.floor(secondsElapsed / 60) % 60;
@@ -341,6 +342,17 @@ function getTime() {
   return (hoursElapsed ? hoursElapsed.toString() + 'h ' : '') +
   (minutesElapsed || hoursElapsed ? minutesElapsed.toString() + 'm ' : '')  +
   (secondsElapsed % 60).toString() + 's';;
+}
+
+function updateTimer() {
+  secondsElapsed++;
+  $('#timer').html(getTime());
+}
+
+function resetTimer() {
+  stopTimer();
+  secondsElapsed = 0;
+  $('#timer').html(getTime());
 }
 
 function setPuzzleDesc() {
