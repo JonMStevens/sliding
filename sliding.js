@@ -12,11 +12,30 @@ const GRID_SIZE = 4;
 const ONE_CLICK_ONE_MOVE = true;
 
 $(function() {
+  createGame();
+});
+
+function createGame() {
   createBoard();
   setPuzzleDesc();
   createCorrectPosStyles();
   createKeyBindings();
-});
+}
+
+function deleteGame() {
+  deleteKeyBindings();
+  deleteCorrectPosStyles();
+  setPuzzleDesc();
+  deleteBoard();
+
+}
+
+function resetGame() {
+  resetMoveCounter();
+  resetTimer();
+  deleteGame();
+  createGame();
+}
 
 function createBoard() {
   $puzzleContainer = $('#puzzle-container');
@@ -67,6 +86,12 @@ function createBoard() {
   }
 }
 
+function deleteBoard() {
+  $('.puzzle-square').remove();
+  setPuzzleDesc();
+}
+
+/* todo this is broken */
 function setPuzzleDesc() {
   let $puzzleDesc = $('#puzzle-desc');
   let $squares = $('.puzzle-square');
@@ -78,6 +103,11 @@ function setPuzzleDesc() {
     }
     txt += $(this).html() + ' ';
   });
+
+  if (!txt) {
+    txt = 'Error: Board is empty. Refresh the page';
+  }
+
   $puzzleDesc.html(txt);
 }
 
