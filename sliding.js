@@ -103,72 +103,51 @@ function squaresOnMouseDown(event) {
 
 function slide($clicked, $empty) {
   var $toMove = null;
-  // right slide
-  if ($clicked.attr('currrow') == $empty.attr('currrow') &&
-      $clicked.attr('currcol') < $empty.attr('currcol')) {
-    /* 	select squares to
-    $toMove starts with $clicked
-    includes all squares to the right of $clicked and to the left of $empty
-    ends with $empty */
-    $toMove = $('.puzzle-square[currrow=\'' +
-      $clicked.attr('currrow').toString() + '\']').filter(function() {
-        return $(this).attr('currcol') >= $clicked.attr('currcol') &&
-        $(this).attr('currcol') <= $empty.attr('currcol');
-      });
-
-    slideSquares($toMove.toArray(), 'right');
+  var dir = '';
+  if ($clicked.attr('currrow') == $empty.attr('currrow')) {
+    if ($clicked.attr('currcol') < $empty.attr('currcol')) {
+      dir = 'right';
+    } else {
+      dir = 'left';
+    }
+  } else if ($clicked.attr('currrow') > $empty.attr('currrow')) {
+    dir = 'up';
+  } else {
+    dir = 'down';
   }
 
-  // left slide
-  else if ($clicked.attr('currrow') == $empty.attr('currrow') &&
-    $clicked.attr('currcol') > $empty.attr('currcol')) {
-    /* 	select squares to move
-    $toMove starts with $empty,
-    includes all squares to the right of $empty and to the left of $clicked,
-    ends with $clicked */
-    $toMove = $('.puzzle-square[currrow=\'' +
-      $clicked.attr('currrow').toString() + '\']').filter(function() {
-        return $(this).attr('currcol') <= $clicked.attr('currcol') &&
-        $(this).attr('currcol') >= $empty.attr('currcol');
-      });
+  $toMove = $('.puzzle-square').filter(function() {
+      switch (dir) {
+        case 'right':
+          return $(this).attr('currrow') == $($clicked).attr('currrow') &&
+          $(this).attr('currcol') >= $clicked.attr('currcol') &&
+          $(this).attr('currcol') <= $empty.attr('currcol');
+        break;
+        case 'left':
+          return $(this).attr('currrow') == $($clicked).attr('currrow') &&
+          $(this).attr('currcol') <= $clicked.attr('currcol') &&
+          $(this).attr('currcol') >= $empty.attr('currcol');
+        break;
+        case 'up':
+          return $(this).attr('currcol') == $($clicked).attr('currcol') &&
+          $(this).attr('currrow') <= $clicked.attr('currrow') &&
+          $(this).attr('currrow') >= $empty.attr('currrow');
+        break;
+        case 'down':
+          return $(this).attr('currcol') == $($clicked).attr('currcol') &&
+          $(this).attr('currrow') >= $clicked.attr('currrow') &&
+          $(this).attr('currrow') <= $empty.attr('currrow');
+        break;
+      }
+    });
 
-    slideSquares($toMove.toArray(), 'left');
-  }
-
-  // up slide
-  else if ($clicked.attr('currcol') == $empty.attr('currcol') &&
-        $clicked.attr('currrow') > $empty.attr('currrow')) {
-    /* 	select squares to move
-    $toMove starts with $clicked,
-    includes all squares to above $clicked and beneath $empty,
-    ends with $empty */
-    $toMove = $('.puzzle-square[currcol=\'' +
-      $clicked.attr('currcol').toString() + '\']').filter(function() {
-        return $(this).attr('currrow') <= $clicked.attr('currrow') &&
-        $(this).attr('currrow') >= $empty.attr('currrow');
-      });
-
-    slideSquares($toMove.toArray(), 'up');
-  }
-  // down slide
-  else if ($clicked.attr('currcol') == $empty.attr('currcol') &&
-        $clicked.attr('currrow') < $empty.attr('currrow')) {
-    /* 	select squares to move
-    $toMove starts with $empty,
-    includes all squares above $empty and beneath $clicked,
-    ends with $clicked */
-    $toMove = $('.puzzle-square[currcol=\'' +
-      $clicked.attr('currcol').toString() + '\']').filter(function() {
-        return $(this).attr('currrow') >= $clicked.attr('currrow') &&
-        $(this).attr('currrow') <= $empty.attr('currrow');
-      });
-
-    slideSquares($toMove.toArray(), 'down');
-  }
-
-  // if we moved tiles increment move counter
+  // if we can move, move and update counter
   if ($toMove) {
-    /* - 1 because $toMove includes moved squares and empty square */
+    slideSquares($toMove.toArray(), dir);
+    /* - 1 because $toMove includes moved squares and empty square
+      if ONE_CLICK_ONE_MOVE is false then
+      we do not want to include moving the empty square as a move
+    */
     updateMoveCounter($toMove.length - 1);
   }
 }
