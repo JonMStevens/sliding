@@ -13,6 +13,7 @@ const ONE_CLICK_ONE_MOVE = true;
 
 $(function() {
   createGame();
+  $('#reset').click(resetGame);
 });
 
 function createGame() {
