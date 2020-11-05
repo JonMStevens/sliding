@@ -3,6 +3,8 @@
 // replace currcol,currrow with one value
 // find out if animation can continue while alert is on screen
 // puzzle research: is every configuration solvable?
+// why is stats outside of tab order
+// why can you not click squares with space anymore
 const GRID_SIZE = 4;
 
 /* ONE_CLICK_ONE_MOVE:
@@ -97,19 +99,21 @@ function setPuzzleDesc() {
   let $puzzleDesc = $('#puzzle-desc');
   let $squares = $('.puzzle-square');
   let txt = '';
-  $squares.each(function(index) {
-    if (index % GRID_SIZE == 0) {
-      txt += 'Row ' + (Math.floor(index / GRID_SIZE) + 1).toString() + ' ';
 
+  for (var row = 0; row < GRID_SIZE; row++) {
+    txt += 'Row ' + (row + 1).toString() + ' ';
+    for (var col = 0; col < GRID_SIZE; col++) {
+      txt += $squares.filter(
+        '[currrow=\'' + row.toString() + '\'][currcol=\'' + col.toString() +
+        '\']').html() + ' ';
     }
-    txt += $(this).html() + ' ';
-  });
-
-  if (!txt) {
-    txt = 'Error: Board is empty. Refresh the page';
   }
 
-  $puzzleDesc.html(txt);
+  if (!txt) {
+    txt = 'Error: Board is empty. Click reset or refresh the page.';
+  }
+
+  $puzzleDesc.html(txt.trimEnd());
 }
 
 function createCorrectPosStyles() {
