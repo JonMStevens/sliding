@@ -3,8 +3,7 @@
 // replace currcol,currrow with one value
 // find out if animation can continue while alert is on screen
 // puzzle research: is every configuration solvable?
-// why is stats outside of tab order
-// why can you not click squares with space anymore
+// give some GRID_SIZE options and option for ONE_CLICK_ONE_MOVE
 const GRID_SIZE = 4;
 
 /* ONE_CLICK_ONE_MOVE:
@@ -16,11 +15,11 @@ const ONE_CLICK_ONE_MOVE = true;
 $(function() {
   createGame();
   $('#reset').click(resetGame);
+
 });
 
 function createGame() {
   createBoard();
-  setPuzzleDesc();
   createCorrectPosStyles();
   createKeyBindings();
 }
@@ -28,9 +27,7 @@ function createGame() {
 function deleteGame() {
   deleteKeyBindings();
   deleteCorrectPosStyles();
-  setPuzzleDesc();
   deleteBoard();
-
 }
 
 function resetGame() {
@@ -92,11 +89,15 @@ function createBoard() {
     });
     $puzzleContainer.append(squareArr[i]);
   }
+
+  setPuzzleDesc();
+  setTabOrder();
 }
 
 function deleteBoard() {
   $('.puzzle-square').remove();
   setPuzzleDesc();
+  setTabOrder();
 }
 
 /* todo this is broken */
@@ -119,6 +120,17 @@ function setPuzzleDesc() {
   }
 
   $puzzleDesc.html(txt.trimEnd());
+}
+
+function setTabOrder() {
+  let $puzzleContainer = $('#puzzle-container');
+  let ti = parseInt($puzzleContainer.attr('tabindex')) + 1;
+  let $squares = $puzzleContainer.find('.puzzle-square');
+  for (var row = 0; row < GRID_SIZE; row++) {
+    for (var col = 0; col < GRID_SIZE; col++) {
+      $squares.filter('[currrow=\'' + row.toString() + '\'][currcol=\'' + col.toString() + '\']').attr('tabindex', ti++);
+    }
+  }
 }
 
 function createCorrectPosStyles() {
@@ -199,6 +211,7 @@ function squaresOnMouseDown(event) {
   if (clickedR === emptyR || clickedC === emptyC) {
     slide($(this), $empty);
     setPuzzleDesc();
+    setTabOrder();
     startTimer();
 
     if (confirmSquareLocation($empty)) {
