@@ -85,6 +85,11 @@ function createBoard() {
 
     // give onclick event and square is ready to be put onto grid
     squareArr[i].mousedown(squaresOnMouseDown);
+    squareArr[i].keydown(function(e) {
+      if (e.keyCode == 13 || e.keyCode == 32) {
+        squaresOnMouseDown.apply($(this), e);
+      }
+    });
     $puzzleContainer.append(squareArr[i]);
   }
 }
@@ -132,14 +137,14 @@ function deleteCorrectPosStyles() {
 }
 
 function createKeyBindings() {
-  $(document).keyup(squareOnKeyUp);
+  $(document).keyup(docOnKeyUp);
 }
 
 function deleteKeyBindings() {
-  $(document).off('keyup', squareOnKeyUp);
+  $(document).off('keyup', docOnKeyUp);
 }
 
-function squareOnKeyUp(event) {
+function docOnKeyUp(event) {
   var $empty = $('.empty-square');
   var $adj = null;
   switch (event.keyCode) {
