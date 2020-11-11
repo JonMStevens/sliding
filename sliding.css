@@ -62,19 +62,16 @@ body *:focus {
   margin: auto;
   max-height: 10vh;
   display: flex;
+  font-family: sans-serif;
 }
 
 #bottom > * {
   display: inline;
-}
-
-#stats {
   width: 100%;
   height: 100%;
 }
 
 .counter {
-  font-family: sans-serif;
   padding: 1em 0.25em 0.25em 0.25em;
 }
 
@@ -86,8 +83,15 @@ body *:focus {
   margin-right: 20px;
 }
 
+#divRadio label {
+  font-size: 2em;
+}
+
+#divRadio label.not(:last-of-type) {
+  margin-right: 10px;
+}
+
 #reset {
-  height: 100%;
   width: 125px;
   font-size: 2.3rem;
 }

@@ -4,8 +4,25 @@
 // find out if animation can continue while alert is on screen
 // puzzle research: is every configuration solvable?
 // give some GRID_SIZE options and option for ONE_CLICK_ONE_MOVE
-const GRID_SIZE = 4;
 
+class Rules {
+  static GS = 4;
+  static SIZE_OPTIONS = [3,4,5];
+  static gridSize() {
+    var selRad = $('input:radio[name=\'grSize\']:checked');
+    var selVal = parseInt(selRad.val());
+    if (!selVal || selVal != this.GS) {
+      this.GS = (Rules.SIZE_OPTIONS.includes(selVal)) ? selVal : 4;
+      $('#grSize' + this.GS.toString()).attr('checked', true);
+    }
+    return this.GS;
+  }
+}
+
+// idea class with static getter method and GRID_SIZE property
+// if getter is called and selected value is different from GRID_SIZE reset resetGame
+// else return value
+// when radio button is changed just need to try getting the value
 /* ONE_CLICK_ONE_MOVE:
    true: increment the move counter by one with each move,
      even if that move slides multiple squares
@@ -15,7 +32,7 @@ const ONE_CLICK_ONE_MOVE = true;
 $(function() {
   createGame();
   $('#reset').click(resetGame);
-
+  $('input:radio[name=\'grSize\']').change(function(e) {resetGame();});
 });
 
 function createGame() {
@@ -42,18 +59,18 @@ function createBoard() {
 
   // set grid size
   $puzzleContainer.css('grid-template-columns', 'repeat(' +
-    GRID_SIZE.toString() + ', minmax(0, 1fr))');
+    Rules.gridSize().toString() + ', minmax(0, 1fr))');
   $puzzleContainer.css('grid-template-rows', 'repeat(' +
-    GRID_SIZE.toString() + ', minmax(0, 1fr))');
+    Rules.gridSize().toString() + ', minmax(0, 1fr))');
 
   // create  squares
-  var squareArr = new Array(GRID_SIZE * GRID_SIZE);
-  for (var row = 0; row < GRID_SIZE; row++) {
-    for (var col = 0; col < GRID_SIZE; col++) {
-      var val = (GRID_SIZE * row + col + 1);
-      squareArr[GRID_SIZE * row + col] =
+  var squareArr = new Array(Rules.gridSize() * Rules.gridSize());
+  for (var row = 0; row < Rules.gridSize(); row++) {
+    for (var col = 0; col < Rules.gridSize(); col++) {
+      var val = (Rules.gridSize() * row + col + 1);
+      squareArr[Rules.gridSize() * row + col] =
         $('<button  class=\'puzzle-square\'>' + val + '</button>');
-      squareArr[GRID_SIZE * row + col].attr('val', val);
+      squareArr[Rules.gridSize() * row + col].attr('val', val);
     }
   }
 
@@ -74,8 +91,8 @@ function createBoard() {
 
   for (var i = 0; i < squareArr.length; i++) {
     // mark current position in grid
-    squareArr[i].attr('currrow', Math.floor(i / GRID_SIZE));
-    squareArr[i].attr('currcol', Math.floor(i % GRID_SIZE));
+    squareArr[i].attr('currrow', Math.floor(i / Rules.gridSize()));
+    squareArr[i].attr('currcol', Math.floor(i % Rules.gridSize()));
 
     // mark starting position for css translation
     squareArr[i].attr('startPosVal', i + 1);
@@ -100,15 +117,14 @@ function deleteBoard() {
   setTabOrder();
 }
 
-/* todo this is broken */
 function setPuzzleDesc() {
   let $puzzleDesc = $('#puzzle-desc');
   let $squares = $('.puzzle-square');
   let txt = '';
 
-  for (var row = 0; row < GRID_SIZE; row++) {
+  for (var row = 0; row < Rules.gridSize(); row++) {
     txt += 'Row ' + (row + 1).toString() + ' ';
-    for (var col = 0; col < GRID_SIZE; col++) {
+    for (var col = 0; col < Rules.gridSize(); col++) {
       txt += $squares.filter(
         '[currrow=\'' + row.toString() + '\'][currcol=\'' + col.toString() +
         '\']').html() + ' ';
@@ -126,16 +142,17 @@ function setTabOrder() {
   let $puzzleContainer = $('#puzzle-container');
   let ti = parseInt($puzzleContainer.attr('tabindex')) + 1;
   let $squares = $puzzleContainer.find('.puzzle-square');
-  for (var row = 0; row < GRID_SIZE; row++) {
-    for (var col = 0; col < GRID_SIZE; col++) {
-      $squares.filter('[currrow=\'' + row.toString() + '\'][currcol=\'' + col.toString() + '\']').attr('tabindex', ti++);
+  for (var row = 0; row < Rules.gridSize(); row++) {
+    for (var col = 0; col < Rules.gridSize(); col++) {
+      $squares.filter('[currrow=\'' + row.toString() + '\'][currcol=\'' +
+      col.toString() + '\']').attr('tabindex', ti++);
     }
   }
 }
 
 function createCorrectPosStyles() {
   // create rules to change style when square is in the correct position
-  for (var i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+  for (var i = 0; i < Rules.gridSize() * Rules.gridSize(); i++) {
     $('<style type=\'text/css\' id=\'correctPosStyle' + i.toString() +
     '\'>.puzzle-square:not(.empty-square)[val=\'' + (i + 1) + '\']' +
     '[currrow=\'' + getRowByVal(i + 1) + '\'][currcol=\'' +
@@ -157,8 +174,14 @@ function deleteKeyBindings() {
 }
 
 function docOnKeyUp(event) {
+  if ($(':focus').is('input:radio')) {
+    // do not interupt normal keyboard control of radio buttons
+    return;
+  }
+
   var $empty = $('.empty-square');
   var $adj = null;
+  console.log(event);
   switch (event.keyCode) {
     case 37:
       //left
@@ -191,6 +214,7 @@ function docOnKeyUp(event) {
   if ($adj.length) {
     $adj.focus();
     $adj.mousedown();
+
   }
 }
 
@@ -358,11 +382,11 @@ function confirmSquareLocation(square) {
 }
 
 function getRowByVal(val) {
-  return Math.floor((val - 1) / GRID_SIZE);
+  return Math.floor((val - 1) / Rules.gridSize());
 }
 
 function getColByVal(val) {
-  return (val - 1) % GRID_SIZE;
+  return (val - 1) % Rules.gridSize();
 }
 
 function doWin() {
