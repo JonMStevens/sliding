@@ -146,7 +146,7 @@ function createCorrectPosStyles() {
     $('<style type=\'text/css\' id=\'correctPosStyle' + i.toString() +
     '\'>.puzzle-square:not(.empty-square)[val=\'' + (i + 1) + '\']' +
     '[currrow=\'' + getRowByVal(i + 1) + '\'][currcol=\'' +
-    getColByVal(i + 1) + '\']' + '{ background-color:#fb3fd685; }' +
+     getColByVal(i + 1) + '\']' + '{ background-color:#82e646; }' +
     '</style>').appendTo('head');
   }
 }
