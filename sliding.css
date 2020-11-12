@@ -78,8 +78,9 @@ body *:focus {
 }
 
 .counter-num,
-#divRadio label {
+label {
   font-size: 1.6em;
+  white-space: nowrap;
 }
 
 .counter:not(:last-of-type) {
@@ -87,7 +88,7 @@ body *:focus {
 }
 
 #divRadio {
-  width: 404px;
+  width: 100%;
   margin-right: 15px;
 }
 
