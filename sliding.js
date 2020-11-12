@@ -12,19 +12,31 @@ const GRID_SIZE = 4;
 const ONE_CLICK_ONE_MOVE = true;
 
 $(function() {
+  createGame();
+  $('#reset').click(resetGame);
+});
+
+function createGame() {
   createBoard();
   setPuzzleDesc();
+  createCorrectPosStyles();
   createKeyBindings();
+}
 
-  // create rules to change style when square is in the correct position
-  for (var i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-    $('<style type=\'text/css\'>.puzzle-square:not(.empty-square)[val=\'' +
-    (i + 1) + '\']' + '[currrow=\'' + getRowByVal(i + 1) + '\'][currcol=\'' +
-      getColByVal(i + 1) + '\']' + '{ background-color:#fb3fd685; }' +
-      '</style>').appendTo('head');
-  }
+function deleteGame() {
+  deleteKeyBindings();
+  deleteCorrectPosStyles();
+  setPuzzleDesc();
+  deleteBoard();
 
-});
+}
+
+function resetGame() {
+  resetMoveCounter();
+  resetTimer();
+  deleteGame();
+  createGame();
+}
 
 function createBoard() {
   $puzzleContainer = $('#puzzle-container');
@@ -72,6 +84,92 @@ function createBoard() {
     // give onclick event and square is ready to be put onto grid
     squareArr[i].mousedown(squaresOnMouseDown);
     $puzzleContainer.append(squareArr[i]);
+  }
+}
+
+function deleteBoard() {
+  $('.puzzle-square').remove();
+  setPuzzleDesc();
+}
+
+/* todo this is broken */
+function setPuzzleDesc() {
+  let $puzzleDesc = $('#puzzle-desc');
+  let $squares = $('.puzzle-square');
+  let txt = '';
+  $squares.each(function(index) {
+    if (index % GRID_SIZE == 0) {
+      txt += 'Row ' + (Math.floor(index / GRID_SIZE) + 1).toString() + ' ';
+
+    }
+    txt += $(this).html() + ' ';
+  });
+
+  if (!txt) {
+    txt = 'Error: Board is empty. Refresh the page';
+  }
+
+  $puzzleDesc.html(txt);
+}
+
+function createCorrectPosStyles() {
+  // create rules to change style when square is in the correct position
+  for (var i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+    $('<style type=\'text/css\' id=\'correctPosStyle' + i.toString() +
+    '\'>.puzzle-square:not(.empty-square)[val=\'' + (i + 1) + '\']' +
+    '[currrow=\'' + getRowByVal(i + 1) + '\'][currcol=\'' +
+    getColByVal(i + 1) + '\']' + '{ background-color:#fb3fd685; }' +
+    '</style>').appendTo('head');
+  }
+}
+
+function deleteCorrectPosStyles() {
+  $('[id^=correctPosStyle]').remove();
+}
+
+function createKeyBindings() {
+  $(document).keyup(squareOnKeyUp);
+}
+
+function deleteKeyBindings() {
+  $(document).off('keyup', squareOnKeyUp);
+}
+
+function squareOnKeyUp(event) {
+  var $empty = $('.empty-square');
+  var $adj = null;
+  switch (event.keyCode) {
+    case 37:
+      //left
+      $adj = $('.puzzle-square[currrow = \'' +
+        $empty.attr('currrow') + '\'][currcol=\'' +
+        (parseInt($empty.attr('currcol')) - 1).toString() + '\']');
+    break;
+    case 38:
+      //up
+      $adj = $('.puzzle-square[currcol = \'' +
+        $empty.attr('currcol') + '\'][currrow=\'' +
+        (parseInt($empty.attr('currrow')) - 1).toString() + '\']');
+    break;
+    case 39:
+      //right
+      $adj = $('.puzzle-square[currrow = \'' +
+        $empty.attr('currrow') + '\'][currcol=\'' +
+        (parseInt($empty.attr('currcol')) + 1).toString() + '\']');
+    break;
+    case 40:
+      //down
+      $adj = $('.puzzle-square[currcol = \'' +
+        $empty.attr('currcol') + '\'][currrow=\'' +
+        (parseInt($empty.attr('currrow')) + 1).toString() + '\']');
+    break;
+    default:
+      return; // do not do anything if key was not an arrow
+  }
+
+  if ($adj.length) {
+    $adj.focus();
+    $adj.mousedown();
   }
 }
 
@@ -199,46 +297,6 @@ function getTranslateString($square, dir) {
   return ret;
 }
 
-function createKeyBindings() {
-  var $empty = $('.empty-square');
-  $(document).keyup(function(e) {
-    var $adj = null;
-    switch (e.keyCode) {
-      case 37:
-        //left
-        $adj = $('.puzzle-square[currrow = \'' +
-          $empty.attr('currrow') + '\'][currcol=\'' +
-          (parseInt($empty.attr('currcol')) - 1).toString() + '\']');
-      break;
-      case 38:
-        //up
-        $adj = $('.puzzle-square[currcol = \'' +
-          $empty.attr('currcol') + '\'][currrow=\'' +
-          (parseInt($empty.attr('currrow')) - 1).toString() + '\']');
-      break;
-      case 39:
-        //right
-        $adj = $('.puzzle-square[currrow = \'' +
-          $empty.attr('currrow') + '\'][currcol=\'' +
-          (parseInt($empty.attr('currcol')) + 1).toString() + '\']');
-      break;
-      case 40:
-        //down
-        $adj = $('.puzzle-square[currcol = \'' +
-          $empty.attr('currcol') + '\'][currrow=\'' +
-          (parseInt($empty.attr('currrow')) + 1).toString() + '\']');
-      break;
-      default:
-        return; // do not do anything if key was not an arrow
-    }
-
-    if ($adj.length) {
-      $adj.focus();
-      $adj.mousedown();
-    }
-  });
-}
-
 function checkWin() {
   if (isWin()) {
     doWin();
@@ -303,12 +361,18 @@ function shuffleArray(array) {
   }
 }
 
+var moveCount = 0;
 function updateMoveCounter(numMoved) {
-  var $counter = $('#move-count');
   if (ONE_CLICK_ONE_MOVE) {
     numMoved = 1;
   }
-  $counter.html((parseInt($counter.html()) + numMoved).toString());
+  moveCount = moveCount + numMoved;
+  $('#move-count').html(moveCount.toString());
+}
+
+function resetMoveCounter() {
+  moveCount = 0;
+  $('#move-count').html('0');
 }
 
 var secondsElapsed = 0;
@@ -328,11 +392,6 @@ function timerIsRunning() {
   return timerInterval ? true : false;
 }
 
-function updateTimer() {
-  secondsElapsed++;
-  $('#timer').html(getTime());
-}
-
 /* returns string with current time broken into seconds, minutes, and hours */
 function getTime() {
   let minutesElapsed = Math.floor(secondsElapsed / 60) % 60;
@@ -343,16 +402,13 @@ function getTime() {
   (secondsElapsed % 60).toString() + 's';;
 }
 
-function setPuzzleDesc() {
-  let $puzzleDesc = $('#puzzle-desc');
-  let $squares = $('.puzzle-square');
-  let txt = '';
-  $squares.each(function(index) {
-    if (index % GRID_SIZE == 0) {
-      txt += 'Row ' + (Math.floor(index / GRID_SIZE) + 1).toString() + ' ';
+function updateTimer() {
+  secondsElapsed++;
+  $('#timer').html(getTime());
+}
 
-    }
-    txt += $(this).html() + ' ';
-  });
-  $puzzleDesc.html(txt);
+function resetTimer() {
+  stopTimer();
+  secondsElapsed = 0;
+  $('#timer').html(getTime());
 }
