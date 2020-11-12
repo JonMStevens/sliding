@@ -8,20 +8,20 @@
         <script src="sliding.js"></script>
     </head>
     <body>
-      <div id="puzzle-desc" class="sr-only">puzzle description</div>
+      <div id="puzzle-desc" class="sr-only" tabindex="1">puzzle description</div>
       <main>
-        <div id="puzzle-container"></div>
+        <div id="puzzle-container" tabindex="2"></div>
       </main>
         <div id="bottom">
   				<div id="stats">
-            <span class="counter">moves:
+            <span class="counter" tabindex="97">moves:
               <span id="move-count" class="counter-num">0</span>
             </span>
-            <span class="counter">time:
+            <span class="counter" tabindex="98">time:
               <span id="timer" class="counter-num">0s</span>
             </span>
   				</div>
-          <button id="reset">reset</button>
+          <button id="reset" tabindex="99">reset</button>
       </div>
 
     </body>

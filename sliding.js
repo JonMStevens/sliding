@@ -3,6 +3,7 @@
 // replace currcol,currrow with one value
 // find out if animation can continue while alert is on screen
 // puzzle research: is every configuration solvable?
+// give some GRID_SIZE options and option for ONE_CLICK_ONE_MOVE
 const GRID_SIZE = 4;
 
 /* ONE_CLICK_ONE_MOVE:
@@ -14,11 +15,11 @@ const ONE_CLICK_ONE_MOVE = true;
 $(function() {
   createGame();
   $('#reset').click(resetGame);
+
 });
 
 function createGame() {
   createBoard();
-  setPuzzleDesc();
   createCorrectPosStyles();
   createKeyBindings();
 }
@@ -26,9 +27,7 @@ function createGame() {
 function deleteGame() {
   deleteKeyBindings();
   deleteCorrectPosStyles();
-  setPuzzleDesc();
   deleteBoard();
-
 }
 
 function resetGame() {
@@ -83,13 +82,22 @@ function createBoard() {
 
     // give onclick event and square is ready to be put onto grid
     squareArr[i].mousedown(squaresOnMouseDown);
+    squareArr[i].keydown(function(e) {
+      if (e.keyCode == 13 || e.keyCode == 32) {
+        squaresOnMouseDown.apply($(this), e);
+      }
+    });
     $puzzleContainer.append(squareArr[i]);
   }
+
+  setPuzzleDesc();
+  setTabOrder();
 }
 
 function deleteBoard() {
   $('.puzzle-square').remove();
   setPuzzleDesc();
+  setTabOrder();
 }
 
 /* todo this is broken */
@@ -97,19 +105,32 @@ function setPuzzleDesc() {
   let $puzzleDesc = $('#puzzle-desc');
   let $squares = $('.puzzle-square');
   let txt = '';
-  $squares.each(function(index) {
-    if (index % GRID_SIZE == 0) {
-      txt += 'Row ' + (Math.floor(index / GRID_SIZE) + 1).toString() + ' ';
 
+  for (var row = 0; row < GRID_SIZE; row++) {
+    txt += 'Row ' + (row + 1).toString() + ' ';
+    for (var col = 0; col < GRID_SIZE; col++) {
+      txt += $squares.filter(
+        '[currrow=\'' + row.toString() + '\'][currcol=\'' + col.toString() +
+        '\']').html() + ' ';
     }
-    txt += $(this).html() + ' ';
-  });
-
-  if (!txt) {
-    txt = 'Error: Board is empty. Refresh the page';
   }
 
-  $puzzleDesc.html(txt);
+  if (!txt) {
+    txt = 'Error: Board is empty. Click reset or refresh the page.';
+  }
+
+  $puzzleDesc.html(txt.trimEnd());
+}
+
+function setTabOrder() {
+  let $puzzleContainer = $('#puzzle-container');
+  let ti = parseInt($puzzleContainer.attr('tabindex')) + 1;
+  let $squares = $puzzleContainer.find('.puzzle-square');
+  for (var row = 0; row < GRID_SIZE; row++) {
+    for (var col = 0; col < GRID_SIZE; col++) {
+      $squares.filter('[currrow=\'' + row.toString() + '\'][currcol=\'' + col.toString() + '\']').attr('tabindex', ti++);
+    }
+  }
 }
 
 function createCorrectPosStyles() {
@@ -128,14 +149,14 @@ function deleteCorrectPosStyles() {
 }
 
 function createKeyBindings() {
-  $(document).keyup(squareOnKeyUp);
+  $(document).keyup(docOnKeyUp);
 }
 
 function deleteKeyBindings() {
-  $(document).off('keyup', squareOnKeyUp);
+  $(document).off('keyup', docOnKeyUp);
 }
 
-function squareOnKeyUp(event) {
+function docOnKeyUp(event) {
   var $empty = $('.empty-square');
   var $adj = null;
   switch (event.keyCode) {
@@ -190,6 +211,7 @@ function squaresOnMouseDown(event) {
   if (clickedR === emptyR || clickedC === emptyC) {
     slide($(this), $empty);
     setPuzzleDesc();
+    setTabOrder();
     startTimer();
 
     if (confirmSquareLocation($empty)) {
