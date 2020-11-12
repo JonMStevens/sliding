@@ -50,6 +50,12 @@ button {
   color: inherit;
   visibility: visible;
   z-index: 1;
+  font-size: 1px;
+  cursor: inherit;
+}
+
+.puzzle-square.empty-square:focus {
+  outline: 7px dashed #929292;
 }
 
 body *:focus {
