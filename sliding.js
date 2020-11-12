@@ -3,19 +3,26 @@
 // replace currcol,currrow with one value
 // find out if animation can continue while alert is on screen
 // puzzle research: is every configuration solvable?
-// give some GRID_SIZE options and option for ONE_CLICK_ONE_MOVE
-const GRID_SIZE = 4;
 
-/* ONE_CLICK_ONE_MOVE:
-   true: increment the move counter by one with each move,
-     even if that move slides multiple squares
-   false: increment the counter by the number of squres moved with each click */
-const ONE_CLICK_ONE_MOVE = true;
+class Rules {
+  /* grid size i.e. 3 will create 3x3 grid */
+  static GS = 4;
+  static SIZE_OPTIONS = [3,4,5];
+  static gridSize() {
+    var selRad = $('input:radio[name=\'grSize\']:checked');
+    var selVal = parseInt(selRad.val());
+    if (!selVal || selVal != this.GS) {
+      this.GS = (Rules.SIZE_OPTIONS.includes(selVal)) ? selVal : 4;
+      $('#grSize' + this.GS.toString()).attr('checked', true);
+    }
+    return this.GS;
+  }
+}
 
 $(function() {
   createGame();
   $('#reset').click(resetGame);
-
+  $('input:radio').change(function(e) {resetGame();});
 });
 
 function createGame() {
@@ -42,18 +49,18 @@ function createBoard() {
 
   // set grid size
   $puzzleContainer.css('grid-template-columns', 'repeat(' +
-    GRID_SIZE.toString() + ', minmax(0, 1fr))');
+    Rules.gridSize().toString() + ', minmax(0, 1fr))');
   $puzzleContainer.css('grid-template-rows', 'repeat(' +
-    GRID_SIZE.toString() + ', minmax(0, 1fr))');
+    Rules.gridSize().toString() + ', minmax(0, 1fr))');
 
   // create  squares
-  var squareArr = new Array(GRID_SIZE * GRID_SIZE);
-  for (var row = 0; row < GRID_SIZE; row++) {
-    for (var col = 0; col < GRID_SIZE; col++) {
-      var val = (GRID_SIZE * row + col + 1);
-      squareArr[GRID_SIZE * row + col] =
+  var squareArr = new Array(Rules.gridSize() * Rules.gridSize());
+  for (var row = 0; row < Rules.gridSize(); row++) {
+    for (var col = 0; col < Rules.gridSize(); col++) {
+      var val = (Rules.gridSize() * row + col + 1);
+      squareArr[Rules.gridSize() * row + col] =
         $('<button  class=\'puzzle-square\'>' + val + '</button>');
-      squareArr[GRID_SIZE * row + col].attr('val', val);
+      squareArr[Rules.gridSize() * row + col].attr('val', val);
     }
   }
 
@@ -74,8 +81,8 @@ function createBoard() {
 
   for (var i = 0; i < squareArr.length; i++) {
     // mark current position in grid
-    squareArr[i].attr('currrow', Math.floor(i / GRID_SIZE));
-    squareArr[i].attr('currcol', Math.floor(i % GRID_SIZE));
+    squareArr[i].attr('currrow', Math.floor(i / Rules.gridSize()));
+    squareArr[i].attr('currcol', Math.floor(i % Rules.gridSize()));
 
     // mark starting position for css translation
     squareArr[i].attr('startPosVal', i + 1);
@@ -100,15 +107,14 @@ function deleteBoard() {
   setTabOrder();
 }
 
-/* todo this is broken */
 function setPuzzleDesc() {
   let $puzzleDesc = $('#puzzle-desc');
   let $squares = $('.puzzle-square');
   let txt = '';
 
-  for (var row = 0; row < GRID_SIZE; row++) {
+  for (var row = 0; row < Rules.gridSize(); row++) {
     txt += 'Row ' + (row + 1).toString() + ' ';
-    for (var col = 0; col < GRID_SIZE; col++) {
+    for (var col = 0; col < Rules.gridSize(); col++) {
       txt += $squares.filter(
         '[currrow=\'' + row.toString() + '\'][currcol=\'' + col.toString() +
         '\']').html() + ' ';
@@ -126,20 +132,21 @@ function setTabOrder() {
   let $puzzleContainer = $('#puzzle-container');
   let ti = parseInt($puzzleContainer.attr('tabindex')) + 1;
   let $squares = $puzzleContainer.find('.puzzle-square');
-  for (var row = 0; row < GRID_SIZE; row++) {
-    for (var col = 0; col < GRID_SIZE; col++) {
-      $squares.filter('[currrow=\'' + row.toString() + '\'][currcol=\'' + col.toString() + '\']').attr('tabindex', ti++);
+  for (var row = 0; row < Rules.gridSize(); row++) {
+    for (var col = 0; col < Rules.gridSize(); col++) {
+      $squares.filter('[currrow=\'' + row.toString() + '\'][currcol=\'' +
+      col.toString() + '\']').attr('tabindex', ti++);
     }
   }
 }
 
 function createCorrectPosStyles() {
   // create rules to change style when square is in the correct position
-  for (var i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+  for (var i = 0; i < Rules.gridSize() * Rules.gridSize(); i++) {
     $('<style type=\'text/css\' id=\'correctPosStyle' + i.toString() +
     '\'>.puzzle-square:not(.empty-square)[val=\'' + (i + 1) + '\']' +
     '[currrow=\'' + getRowByVal(i + 1) + '\'][currcol=\'' +
-    getColByVal(i + 1) + '\']' + '{ background-color:#fb3fd685; }' +
+     getColByVal(i + 1) + '\']' + '{ background-color:#82e646; }' +
     '</style>').appendTo('head');
   }
 }
@@ -157,6 +164,11 @@ function deleteKeyBindings() {
 }
 
 function docOnKeyUp(event) {
+  if ($(':focus').is('input:radio')) {
+    // do not interupt normal keyboard control of radio buttons
+    return;
+  }
+
   var $empty = $('.empty-square');
   var $adj = null;
   switch (event.keyCode) {
@@ -191,6 +203,7 @@ function docOnKeyUp(event) {
   if ($adj.length) {
     $adj.focus();
     $adj.mousedown();
+
   }
 }
 
@@ -266,7 +279,6 @@ function slide($clicked, $empty) {
   if ($toMove) {
     slideSquares($toMove.toArray(), dir);
     /* - 1 because $toMove includes moved squares and empty square
-      if ONE_CLICK_ONE_MOVE is false then
       we do not want to include moving the empty square as a move
     */
     updateMoveCounter($toMove.length - 1);
@@ -358,11 +370,11 @@ function confirmSquareLocation(square) {
 }
 
 function getRowByVal(val) {
-  return Math.floor((val - 1) / GRID_SIZE);
+  return Math.floor((val - 1) / Rules.gridSize());
 }
 
 function getColByVal(val) {
-  return (val - 1) % GRID_SIZE;
+  return (val - 1) % Rules.gridSize();
 }
 
 function doWin() {
@@ -384,17 +396,19 @@ function shuffleArray(array) {
 }
 
 var moveCount = 0;
+var clickCount = 0;
 function updateMoveCounter(numMoved) {
-  if (ONE_CLICK_ONE_MOVE) {
-    numMoved = 1;
-  }
   moveCount = moveCount + numMoved;
+  clickCount = clickCount + 1;
   $('#move-count').html(moveCount.toString());
+  $('#click-count').html(clickCount.toString());
 }
 
 function resetMoveCounter() {
   moveCount = 0;
+  clickCount = 0;
   $('#move-count').html('0');
+  $('#click-count').html('0');
 }
 
 var secondsElapsed = 0;
