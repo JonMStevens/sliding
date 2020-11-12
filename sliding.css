@@ -69,22 +69,26 @@ body *:focus {
   display: inline;
   width: 100%;
   height: 100%;
+  font-size: 1em;
 }
 
 .counter {
   padding: 1em 0.25em 0.25em 0.25em;
+  white-space: nowrap;
 }
 
-.counter-num {
-  font-size: 2em;
+.counter-num,
+#divRadio label {
+  font-size: 1.6em;
 }
 
 .counter:not(:last-of-type) {
-  margin-right: 20px;
+  margin-right: 8px;
 }
 
-#divRadio label {
-  font-size: 2em;
+#divRadio {
+  width: 404px;
+  margin-right: 15px;
 }
 
 #divRadio label.not(:last-of-type) {

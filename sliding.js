@@ -3,9 +3,9 @@
 // replace currcol,currrow with one value
 // find out if animation can continue while alert is on screen
 // puzzle research: is every configuration solvable?
-// give some GRID_SIZE options and option for ONE_CLICK_ONE_MOVE
 
 class Rules {
+  /* grid size i.e. 3 will create 3x3 grid */
   static GS = 4;
   static SIZE_OPTIONS = [3,4,5];
   static gridSize() {
@@ -19,20 +19,10 @@ class Rules {
   }
 }
 
-// idea class with static getter method and GRID_SIZE property
-// if getter is called and selected value is different from GRID_SIZE reset resetGame
-// else return value
-// when radio button is changed just need to try getting the value
-/* ONE_CLICK_ONE_MOVE:
-   true: increment the move counter by one with each move,
-     even if that move slides multiple squares
-   false: increment the counter by the number of squres moved with each click */
-const ONE_CLICK_ONE_MOVE = true;
-
 $(function() {
   createGame();
   $('#reset').click(resetGame);
-  $('input:radio[name=\'grSize\']').change(function(e) {resetGame();});
+  $('input:radio').change(function(e) {resetGame();});
 });
 
 function createGame() {
@@ -181,7 +171,6 @@ function docOnKeyUp(event) {
 
   var $empty = $('.empty-square');
   var $adj = null;
-  console.log(event);
   switch (event.keyCode) {
     case 37:
       //left
@@ -290,7 +279,6 @@ function slide($clicked, $empty) {
   if ($toMove) {
     slideSquares($toMove.toArray(), dir);
     /* - 1 because $toMove includes moved squares and empty square
-      if ONE_CLICK_ONE_MOVE is false then
       we do not want to include moving the empty square as a move
     */
     updateMoveCounter($toMove.length - 1);
@@ -408,17 +396,19 @@ function shuffleArray(array) {
 }
 
 var moveCount = 0;
+var clickCount = 0;
 function updateMoveCounter(numMoved) {
-  if (ONE_CLICK_ONE_MOVE) {
-    numMoved = 1;
-  }
   moveCount = moveCount + numMoved;
+  clickCount = clickCount + 1;
   $('#move-count').html(moveCount.toString());
+  $('#click-count').html(clickCount.toString());
 }
 
 function resetMoveCounter() {
   moveCount = 0;
+  clickCount = 0;
   $('#move-count').html('0');
+  $('#click-count').html('0');
 }
 
 var secondsElapsed = 0;
