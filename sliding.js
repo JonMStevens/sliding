@@ -68,7 +68,7 @@ function createBoard() {
   squareArr[squareArr.length - 1].html('blank square');
 
   var inOrder = true;
-  while (inOrder) {
+  while (inOrder || !isSolvable(squareArr)) {
     // randomize square order, will be added to the grid in this random order
     shuffleArray(squareArr);
     for (var i = 0; i < squareArr.length; i++) {
@@ -99,6 +99,43 @@ function createBoard() {
 
   setPuzzleDesc();
   setTabOrder();
+}
+
+//https://www.geeksforgeeks.org/check-instance-15-puzzle-solvable/
+// todo clean
+function isSolvable(squareArr) {
+  var valArr = Array(squareArr.length);
+  for (var i = 0; i < squareArr.length; i++) {
+    valArr[i] = parseInt($(squareArr[i]).attr('val'));
+  }
+
+  var inversions = countInversionsBrute(valArr);
+
+  if (Rules.gridSize() % 2) {
+    // gridSize odd
+    return inversions % 2 == 0;
+  } else {
+    // gridSize event
+    var emptyR = parseInt($('.empty-square').attr('currrow'));
+    if ((Rules.gridSize - emptyR + 1) % 2) {
+      // emptyR odd
+      return inversions % 2 == 0;
+    } else {
+      return inversions % 2 == 1;
+    }
+  }
+}
+
+// todo OPTIMIZE
+function countInversionsBrute(arr) {
+  var inversions = 0;
+  for (var i = 0; i < arr.length; i++) {
+    for (var j = i - 1; j >= 0; j--) {
+      inversions = (arr[j] > arr[i]) ? inversions + 1 : inversions;
+    }
+  }
+
+  return inversions;
 }
 
 function deleteBoard() {
