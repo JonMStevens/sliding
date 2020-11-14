@@ -2,7 +2,6 @@
 // fix font and reduce space when doing a really large puzzle like 16x16
 // replace currcol,currrow with one value
 // find out if animation can continue while alert is on screen
-// puzzle research: is every configuration solvable?
 
 class Rules {
   /* grid size i.e. 3 will create 3x3 grid */
@@ -102,7 +101,6 @@ function createBoard() {
 }
 
 //https://www.geeksforgeeks.org/check-instance-15-puzzle-solvable/
-// todo clean
 function isSolvable(squareArr) {
   var valArr = Array(squareArr.length);
   for (var i = 0; i < squareArr.length; i++) {
