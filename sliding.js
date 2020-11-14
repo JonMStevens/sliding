@@ -109,24 +109,19 @@ function isSolvable(squareArr) {
     valArr[i] = parseInt($(squareArr[i]).attr('val'));
   }
 
-  var inversions = countInversionsBrute(valArr);
+  var inversions = mergeSortWithInversions(valArr)[1];
 
-  if (Rules.gridSize() % 2) {
-    // gridSize odd
-    return inversions % 2 == 0;
-  } else {
-    // gridSize event
-    var emptyR = parseInt($('.empty-square').attr('currrow'));
-    if ((Rules.gridSize - emptyR + 1) % 2) {
-      // emptyR odd
-      return inversions % 2 == 0;
-    } else {
-      return inversions % 2 == 1;
-    }
-  }
+  /* empty square is in the ith last row
+  e.g.  if empty is in 4th row of a 4 row grid it is 1st last,
+        if empty is in 2nd row of a 4 row grid it is 3rd last
+  */
+  var ithLast = 1 + Rules.gridSize() -
+                    parseInt($('.empty-square').attr('currrow'));
+  return (Rules.gridSize() % 2 == 1 && inversions % 2 == 0) ||
+          (Rules.gridSize() % 2 == 0 && inversions % 2 != ithLast % 2);
 }
 
-// todo OPTIMIZE
+/* unoptimized, for testing:
 function countInversionsBrute(arr) {
   var inversions = 0;
   for (var i = 0; i < arr.length; i++) {
@@ -136,6 +131,39 @@ function countInversionsBrute(arr) {
   }
 
   return inversions;
+}
+ */
+
+/* merge sort which also counts number of inversions
+  we do not need the sorted array but this takes nlogn which i think is best
+  returns array of results: [0] is sorted array, [1] is inversion count
+  partially stolen from https://www.geeksforgeeks.org/counting-inversions/ */
+function mergeSortWithInversions(arr) {
+  if (!arr) { return [[], 0]; }
+  if (arr.length < 2) { return [arr, 0]; }
+
+  var mid = Math.floor(arr.length / 2);
+  var left =  mergeSortWithInversions(arr.slice(0, mid));
+  var right = mergeSortWithInversions(arr.slice(mid));
+
+  var li = 0;
+  var ri = 0;
+  var ret = [];
+  var retInv = left[1] + right[1];
+
+  while (li < left[0].length && ri < right[0].length) {
+    if (left[0][li] <= right[0][ri]) {
+      ret.push(left[0][li++]);
+    } else {
+      ret.push(right[0][ri++]);
+      retInv = retInv + (left[0].length - li);
+    }
+  }
+
+  while (li < left[0].length) { ret.push(left[0][li++]); }
+  while (ri < right[0].length) { ret.push(right[0][ri++]); }
+
+  return [ret, retInv];
 }
 
 function deleteBoard() {
