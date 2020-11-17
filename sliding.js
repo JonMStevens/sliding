@@ -67,7 +67,8 @@ function createBoard() {
   squareArr[squareArr.length - 1].html('blank square');
 
   var inOrder = true;
-  while (inOrder || !isSolvable(squareArr)) {
+  var solvable = false;
+  while (inOrder || !solvable) {
     // randomize square order, will be added to the grid in this random order
     shuffleArray(squareArr);
     for (var i = 0; i < squareArr.length; i++) {
@@ -76,6 +77,8 @@ function createBoard() {
         break;
       }
     }
+
+    solvable = isSolvable(squareArr);
   }
 
   for (var i = 0; i < squareArr.length; i++) {
@@ -103,8 +106,13 @@ function createBoard() {
 //https://www.geeksforgeeks.org/check-instance-15-puzzle-solvable/
 function isSolvable(squareArr) {
   var valArr = Array(squareArr.length);
+  var emptyR = -1;
   for (var i = 0; i < squareArr.length; i++) {
-    valArr[i] = parseInt($(squareArr[i]).attr('val'));
+    var sq = squareArr[i];
+    valArr[i] = parseInt($(sq).attr('val'));
+    if ($(sq).hasClass('empty-square')) {
+      emptyR = Math.floor(i / Rules.gridSize());
+    }
   }
 
   var inversions = mergeSortWithInversions(valArr)[1];
@@ -113,24 +121,11 @@ function isSolvable(squareArr) {
   e.g.  if empty is in 4th row of a 4 row grid it is 1st last,
         if empty is in 2nd row of a 4 row grid it is 3rd last
   */
-  var ithLast = 1 + Rules.gridSize() -
-                    parseInt($('.empty-square').attr('currrow'));
-  return (Rules.gridSize() % 2 == 1 && inversions % 2 == 0) ||
-          (Rules.gridSize() % 2 == 0 && inversions % 2 != ithLast % 2);
-}
+  var ithLast = 1 + Rules.gridSize() - emptyR;
 
-/* unoptimized, for testing:
-function countInversionsBrute(arr) {
-  var inversions = 0;
-  for (var i = 0; i < arr.length; i++) {
-    for (var j = i - 1; j >= 0; j--) {
-      inversions = (arr[j] > arr[i]) ? inversions + 1 : inversions;
-    }
-  }
-
-  return inversions;
+  return (boardSize % 2 == 1 && inversions % 2 == 0) ||
+           (boardSize % 2 == 0 && inversions % 2 != ithLast % 2);
 }
- */
 
 /* merge sort which also counts number of inversions
   we do not need the sorted array but this takes nlogn which i think is best
