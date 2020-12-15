@@ -2,6 +2,8 @@
 // fix font and reduce space when doing a really large puzzle like 16x16
 // replace currcol,currrow with one value
 // find out if animation can continue while alert is on screen
+// custom colors
+// use picture instead of numbers
 
 class Rules {
   /* grid size i.e. 3 will create 3x3 grid */
@@ -105,13 +107,17 @@ function createBoard() {
 
 //https://www.geeksforgeeks.org/check-instance-15-puzzle-solvable/
 function isSolvable(squareArr) {
-  var valArr = Array(squareArr.length);
+  var valArr = [];
   var emptyR = -1;
   for (var i = 0; i < squareArr.length; i++) {
     var sq = squareArr[i];
-    valArr[i] = parseInt($(sq).attr('val'));
+
+    // blank square row needs to be known,
+    // but blank square should not be included in finding the number of inversions
     if ($(sq).hasClass('empty-square')) {
       emptyR = Math.floor(i / Rules.gridSize());
+    } else {
+      valArr.push(parseInt($(sq).attr('val')));
     }
   }
 
@@ -121,8 +127,7 @@ function isSolvable(squareArr) {
   e.g.  if empty is in 4th row of a 4 row grid it is 1st last,
         if empty is in 2nd row of a 4 row grid it is 3rd last
   */
-  var ithLast = 1 + Rules.gridSize() - emptyR;
-
+  var ithLast = Rules.gridSize() - emptyR;
   return (Rules.gridSize() % 2 == 1 && inversions % 2 == 0) ||
            (Rules.gridSize() % 2 == 0 && inversions % 2 != ithLast % 2);
 }
