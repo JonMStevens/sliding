@@ -2,7 +2,8 @@
 // fix font and reduce space when doing a really large puzzle like 16x16
 // replace currcol,currrow with one value
 // find out if animation can continue while alert is on screen
-// puzzle research: is every configuration solvable?
+// custom colors
+// use picture instead of numbers
 
 class Rules {
   /* grid size i.e. 3 will create 3x3 grid */
@@ -68,7 +69,8 @@ function createBoard() {
   squareArr[squareArr.length - 1].html('blank square');
 
   var inOrder = true;
-  while (inOrder) {
+  var solvable = false;
+  while (inOrder || !solvable) {
     // randomize square order, will be added to the grid in this random order
     shuffleArray(squareArr);
     for (var i = 0; i < squareArr.length; i++) {
@@ -77,6 +79,8 @@ function createBoard() {
         break;
       }
     }
+
+    solvable = isSolvable(squareArr);
   }
 
   for (var i = 0; i < squareArr.length; i++) {
@@ -99,6 +103,65 @@ function createBoard() {
 
   setPuzzleDesc();
   setTabOrder();
+}
+
+//https://www.geeksforgeeks.org/check-instance-15-puzzle-solvable/
+function isSolvable(squareArr) {
+  var valArr = [];
+  var emptyR = -1;
+  for (var i = 0; i < squareArr.length; i++) {
+    var sq = squareArr[i];
+
+    // blank square row needs to be known,
+    // but blank square should not be included in finding the number of inversions
+    if ($(sq).hasClass('empty-square')) {
+      emptyR = Math.floor(i / Rules.gridSize());
+    } else {
+      valArr.push(parseInt($(sq).attr('val')));
+    }
+  }
+
+  var inversions = mergeSortWithInversions(valArr)[1];
+
+  /* empty square is in the ith last row
+  e.g.  if empty is in 4th row of a 4 row grid it is 1st last,
+        if empty is in 2nd row of a 4 row grid it is 3rd last
+  */
+  var ithLast = Rules.gridSize() - emptyR;
+  return (Rules.gridSize() % 2 == 1 && inversions % 2 == 0) ||
+           (Rules.gridSize() % 2 == 0 && inversions % 2 != ithLast % 2);
+}
+
+/* merge sort which also counts number of inversions
+  we do not need the sorted array but this takes nlogn which i think is best
+  returns array of results: [0] is sorted array, [1] is inversion count
+  partially stolen from https://www.geeksforgeeks.org/counting-inversions/ */
+function mergeSortWithInversions(arr) {
+  if (!arr) { return [[], 0]; }
+  if (arr.length < 2) { return [arr, 0]; }
+
+  var mid = Math.floor(arr.length / 2);
+  var left =  mergeSortWithInversions(arr.slice(0, mid));
+  var right = mergeSortWithInversions(arr.slice(mid));
+
+  var li = 0;
+  var ri = 0;
+  var ret = [];
+  var retInv = left[1] + right[1];
+
+  while (li < left[0].length && ri < right[0].length) {
+    if (left[0][li] <= right[0][ri]) {
+      ret.push(left[0][li++]);
+    } else {
+      ret.push(right[0][ri++]);
+      retInv = retInv + (left[0].length - li);
+    }
+  }
+
+  while (li < left[0].length) { ret.push(left[0][li++]); }
+  while (ri < right[0].length) { ret.push(right[0][ri++]); }
+
+  return [ret, retInv];
 }
 
 function deleteBoard() {
