@@ -377,7 +377,7 @@ function slideSquares(arr, dir) {
 /* returns transform css value string */
 function getTranslateString($square, dir) {
   var squareMargin =
-    parseInt($('.puzzle-square').css('margin').replace('px', ''));
+    parseInt($('.puzzle-square').css('margin-left').replace('px', ''));
   var ret = 'translate(calc({0} + {1}), calc({2} + {3}))';
   var distX = $square.attr('currcol') -
     getColByVal($square.attr('startPosVal'));
