@@ -23,7 +23,7 @@ class Rules {
 $(function() {
   createGame();
   $('#reset').click(resetGame);
-  $('input:radio').change(function(e) {resetGame();});
+  $('input:radio').change(function() {resetGame();});
 });
 
 function createGame() {
@@ -46,7 +46,7 @@ function resetGame() {
 }
 
 function createBoard() {
-  $puzzleContainer = $('#puzzle-container');
+  let $puzzleContainer = $('#puzzle-container');
 
   // set grid size
   $puzzleContainer.css('grid-template-columns', 'repeat(' +
@@ -56,8 +56,8 @@ function createBoard() {
 
   // create  squares
   var squareArr = new Array(Rules.gridSize() * Rules.gridSize());
-  for (var row = 0; row < Rules.gridSize(); row++) {
-    for (var col = 0; col < Rules.gridSize(); col++) {
+  for (let row = 0; row < Rules.gridSize(); row++) {
+    for (let col = 0; col < Rules.gridSize(); col++) {
       var val = (Rules.gridSize() * row + col + 1);
       squareArr[Rules.gridSize() * row + col] =
         $('<button  class=\'puzzle-square\'>' + val + '</button>');
@@ -73,7 +73,7 @@ function createBoard() {
   while (inOrder || !solvable) {
     // randomize square order, will be added to the grid in this random order
     shuffleArray(squareArr);
-    for (var i = 0; i < squareArr.length; i++) {
+    for (let i = 0; i < squareArr.length; i++) {
       if (parseInt($(squareArr[i]).attr('val')) != (i + 1)) {
         inOrder = false;
         break;
@@ -83,7 +83,7 @@ function createBoard() {
     solvable = isSolvable(squareArr);
   }
 
-  for (var i = 0; i < squareArr.length; i++) {
+  for (let i = 0; i < squareArr.length; i++) {
     // mark current position in grid
     squareArr[i].attr('currrow', Math.floor(i / Rules.gridSize()));
     squareArr[i].attr('currcol', Math.floor(i % Rules.gridSize()));
@@ -95,7 +95,7 @@ function createBoard() {
     squareArr[i].mousedown(squaresOnMouseDown);
     squareArr[i].keydown(function(e) {
       if (e.keyCode == 13 || e.keyCode == 32) {
-        squaresOnMouseDown.apply($(this), e);
+        squaresOnMouseDown.apply($(this));
       }
     });
     $puzzleContainer.append(squareArr[i]);
@@ -109,7 +109,7 @@ function createBoard() {
 function isSolvable(squareArr) {
   var valArr = [];
   var emptyR = -1;
-  for (var i = 0; i < squareArr.length; i++) {
+  for (let i = 0; i < squareArr.length; i++) {
     var sq = squareArr[i];
 
     // blank square row needs to be known,
@@ -175,9 +175,9 @@ function setPuzzleDesc() {
   let $squares = $('.puzzle-square');
   let txt = '';
 
-  for (var row = 0; row < Rules.gridSize(); row++) {
+  for (let row = 0; row < Rules.gridSize(); row++) {
     txt += 'Row ' + (row + 1).toString() + ' ';
-    for (var col = 0; col < Rules.gridSize(); col++) {
+    for (let col = 0; col < Rules.gridSize(); col++) {
       txt += $squares.filter(
         '[currrow=\'' + row.toString() + '\'][currcol=\'' + col.toString() +
         '\']').html() + ' ';
@@ -195,8 +195,8 @@ function setTabOrder() {
   let $puzzleContainer = $('#puzzle-container');
   let ti = parseInt($puzzleContainer.attr('tabindex')) + 1;
   let $squares = $puzzleContainer.find('.puzzle-square');
-  for (var row = 0; row < Rules.gridSize(); row++) {
-    for (var col = 0; col < Rules.gridSize(); col++) {
+  for (let row = 0; row < Rules.gridSize(); row++) {
+    for (let col = 0; col < Rules.gridSize(); col++) {
       $squares.filter('[currrow=\'' + row.toString() + '\'][currcol=\'' +
       col.toString() + '\']').attr('tabindex', ti++);
     }
@@ -205,7 +205,7 @@ function setTabOrder() {
 
 function createCorrectPosStyles() {
   // create rules to change style when square is in the correct position
-  for (var i = 0; i < Rules.gridSize() * Rules.gridSize(); i++) {
+  for (let i = 0; i < Rules.gridSize() * Rules.gridSize(); i++) {
     $('<style type=\'text/css\' id=\'correctPosStyle' + i.toString() +
     '\'>.puzzle-square:not(.empty-square)[val=\'' + (i + 1) + '\']' +
     '[currrow=\'' + getRowByVal(i + 1) + '\'][currcol=\'' +
@@ -270,7 +270,7 @@ function docOnKeyUp(event) {
   }
 }
 
-function squaresOnMouseDown(event) {
+function squaresOnMouseDown() {
   var $empty = $('.empty-square');
   var clickedR = $(this).attr('currrow');
   var clickedC = $(this).attr('currcol');
@@ -319,22 +319,18 @@ function slide($clicked, $empty) {
           return $(this).attr('currrow') == $($clicked).attr('currrow') &&
           $(this).attr('currcol') >= $clicked.attr('currcol') &&
           $(this).attr('currcol') <= $empty.attr('currcol');
-        break;
         case 'left':
           return $(this).attr('currrow') == $($clicked).attr('currrow') &&
           $(this).attr('currcol') <= $clicked.attr('currcol') &&
           $(this).attr('currcol') >= $empty.attr('currcol');
-        break;
         case 'up':
           return $(this).attr('currcol') == $($clicked).attr('currcol') &&
           $(this).attr('currrow') <= $clicked.attr('currrow') &&
           $(this).attr('currrow') >= $empty.attr('currrow');
-        break;
         case 'down':
           return $(this).attr('currcol') == $($clicked).attr('currcol') &&
           $(this).attr('currrow') >= $clicked.attr('currrow') &&
           $(this).attr('currrow') <= $empty.attr('currrow');
-        break;
       }
     });
 
@@ -360,7 +356,7 @@ function slideSquares(arr, dir) {
   var currVals = new Array(arr.length);
   var sign = (dir == 'up' || dir == 'left') ? -1 : 1;
   var changeAttr = (dir == 'up' || dir == 'down') ? 'currrow' : 'currcol';
-  for (var i = 0; i < arr.length; i++) {
+  for (let i = 0; i < arr.length; i++) {
     var curr = parseInt($(arr[i]).attr(changeAttr));
     currVals[i] = curr;
     $(arr[i]).attr(changeAttr, curr + (1 * sign));
@@ -369,13 +365,13 @@ function slideSquares(arr, dir) {
   $('.empty-square').attr(changeAttr,
     sign > 0 ? Math.min(...currVals) : Math.max(...currVals));
 
-  for (var i = 0; i < arr.length; i++) {
-    $(arr[i]).css({'transform': getTranslateString($(arr[i]), dir)});
+  for (let i = 0; i < arr.length; i++) {
+    $(arr[i]).css({'transform': getTranslateString($(arr[i]))});
   }
 }
 
 /* returns transform css value string */
-function getTranslateString($square, dir) {
+function getTranslateString($square) {
   var squareMargin =
     parseInt($('.puzzle-square').css('margin-left').replace('px', ''));
   var ret = 'translate(calc({0} + {1}), calc({2} + {3}))';
@@ -412,7 +408,7 @@ function isWin() {
   /*  in each iteration check the ith square and the ith from last.
       since most of the time this puzzle will be solved in order or in reverse
         this should more quickly find if part of the puzzle is out of order */
-  for (var i = 0; 2 * i < squares.length - 1; i++) {
+  for (let i = 0; 2 * i < squares.length - 1; i++) {
     if (!confirmSquareLocation(squares[i]) ||
       !confirmSquareLocation(squares[squares.length - (1 + i)])) {
       return false;
@@ -498,7 +494,7 @@ function getTime() {
 
   return (hoursElapsed ? hoursElapsed.toString() + 'h ' : '') +
   (minutesElapsed || hoursElapsed ? minutesElapsed.toString() + 'm ' : '')  +
-  (secondsElapsed % 60).toString() + 's';;
+  (secondsElapsed % 60).toString() + 's';
 }
 
 function updateTimer() {
