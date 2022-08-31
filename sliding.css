@@ -7,21 +7,30 @@
   overflow: hidden;
 }
 
+:root {
+  --square-color: rgb(255, 255, 255);
+  --square-bg-color: rgb(0, 0, 0);
+  --square-correct-color: rgb(0, 0, 0);
+  --square-correct-bg-color: rgb(130, 230, 70);
+  --square-empty-focus-color: rgb(146, 146, 146);
+  --game-bg-color: rgb(255, 255, 255);
+}
+
 #puzzle-container {
   width: min(90vh, 90vw);
   height: min(90vh, 90vw);
   margin: auto;
   display: grid;
-  background-color: white;
-  color: white;
+  background-color: var(--game-bg-color);
+  color: var(--square-color);
 }
 
 button {
   display: inline-block;
-  background-color: black;
+  background-color: var(--square-bg-color);
   border: none;
   text-decoration: none;
-  color: #fff;
+  color: var(--square-color);
   font-family: sans-serif;
   font-size: 3rem;
   cursor: pointer;
@@ -55,11 +64,11 @@ button {
 }
 
 .puzzle-square.empty-square:focus {
-  outline: 7px dashed #929292;
+  outline: 7px dashed var(--square-empty-focus-color);
 }
 
 body *:focus {
-  outline: 7px dashed #000;
+  outline: 7px dashed var(--square-bg-color);
 }
 
 #bottom {
@@ -98,7 +107,7 @@ label {
   margin-right: 15px;
 }
 
-#divRadio label.not(:last-of-type) {
+#divRadio label:not(:last-of-type) {
   margin-right: 10px;
 }
 
