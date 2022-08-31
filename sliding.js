@@ -237,7 +237,7 @@ function createCorrectPosStyles() {
         "'][currcol='" +
         getColByVal(i + 1) +
         "']" +
-        '{ background-color:var(--square-correct-bg-color); }' +
+        '{ background-color: var(--square-correct-bg-color); color: var(--square-correct-color); }' +
         '</style>'
     ).appendTo('head');
   }

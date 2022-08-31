@@ -10,6 +10,7 @@
 :root {
   --square-color: rgb(255, 255, 255);
   --square-bg-color: rgb(0, 0, 0);
+  --square-correct-color: rgb(0, 0, 0);
   --square-correct-bg-color: rgb(130, 230, 70);
   --square-empty-focus-color: rgb(146, 146, 146);
   --game-bg-color: rgb(255, 255, 255);
