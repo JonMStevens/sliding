@@ -247,6 +247,16 @@ function deleteCorrectPosStyles() {
   $('[id^=correctPosStyle]').remove();
 }
 
+function getFontSize() {
+  return Rules.gridSize() <= 5 ? 3 : 15 / Rules.gridSize();
+}
+
+function createFontSizeStyle() {
+  $(
+    `<style type='text/css' id='adjustedFontSize'>button { font-size: ${getFontSize()}rem; }</style>`
+  ).appendTo('head');
+}
+
 function createKeyBindings() {
   $(document).keyup(docOnKeyUp);
 }
