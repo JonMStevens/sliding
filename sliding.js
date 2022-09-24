@@ -596,7 +596,7 @@ function stopTimer() {
 }
 
 function timerIsRunning() {
-  return timerInterval ? true : false;
+  return Boolean(timerInterval);
 }
 
 /* returns string with current time broken into seconds, minutes, and hours */
