@@ -274,10 +274,14 @@ function createCorrectPosStyles() {
       "'][currcol='" +
       getColByVal(i + 1) +
       "']" +
-        '{ background-color: var(--square-correct-bg-color); color: var(--square-correct-color); }' +
-        '</style>'
-    ).appendTo('head');
-  }
+      '{ background-color: var(--square-correct-bg-color); color: var(--square-correct-color); }'
+  );
+
+  $('head').append(
+    "<style type='text/css' id='correctPosStyles'>" +
+      correctPosArr.join('') +
+      '</style>'
+  );
 }
 
 function deleteCorrectPosStyles() {
