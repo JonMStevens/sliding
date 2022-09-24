@@ -3,8 +3,8 @@ class Rules {
   static GS = 4;
   static SIZE_OPTIONS = [3, 4, 5];
   static gridSize() {
-    var selRad = $("input:radio[name='grSize']:checked");
-    var selVal = parseInt(selRad.val());
+    const selRad = $("input:radio[name='grSize']:checked");
+    const selVal = parseInt(selRad.val());
     if (!selVal || selVal != this.GS) {
       this.GS = Rules.SIZE_OPTIONS.includes(selVal) ? selVal : 4;
       $('#grSize' + this.GS.toString()).attr('checked', true);
@@ -38,10 +38,10 @@ function deleteGame() {
 function createMenu() {
   const $divGrSize = $('#divGrSize');
   $divGrSize.append("<span class='spanGrSize'>board size: </span>");
-  var $tabItems = $('[tabindex]');
+  const $tabItems = $('[tabindex]');
 
   // max tab index should be higher than any radio buttons, should probably be reset button
-  var firstTabIndex =
+  const firstTabIndex =
     Math.max.apply(
       Math,
       $tabItems.map(function () {
@@ -81,7 +81,7 @@ function resetGame() {
 }
 
 function createBoard() {
-  let $puzzleContainer = $('#puzzle-container');
+  const $puzzleContainer = $('#puzzle-container');
 
   // set grid size
   $puzzleContainer.css(
@@ -94,10 +94,10 @@ function createBoard() {
   );
 
   // create  squares
-  var squareArr = new Array(Rules.gridSize() * Rules.gridSize());
+  const squareArr = new Array(Rules.gridSize() * Rules.gridSize());
   for (let row = 0; row < Rules.gridSize(); row++) {
     for (let col = 0; col < Rules.gridSize(); col++) {
-      var val = Rules.gridSize() * row + col + 1;
+      const val = Rules.gridSize() * row + col + 1;
       squareArr[Rules.gridSize() * row + col] = $(
         "<button  class='puzzle-square'>" + val + '</button>'
       );
@@ -143,10 +143,10 @@ function createBoard() {
 
 //https://www.geeksforgeeks.org/check-instance-15-puzzle-solvable/
 function isSolvable(squareArr) {
-  var valArr = [];
-  var emptyR = -1;
+  const valArr = [];
+  let emptyR = -1;
   for (let i = 0; i < squareArr.length; i++) {
-    var sq = squareArr[i];
+    const sq = squareArr[i];
 
     // blank square row needs to be known,
     // but blank square should not be included in finding the number of inversions
@@ -157,13 +157,13 @@ function isSolvable(squareArr) {
     }
   }
 
-  var inversions = mergeSortWithInversions(valArr)[1];
+  const inversions = mergeSortWithInversions(valArr)[1];
 
   /* empty square is in the ith last row
   e.g.  if empty is in 4th row of a 4 row grid it is 1st last,
         if empty is in 2nd row of a 4 row grid it is 3rd last
   */
-  var ithLast = Rules.gridSize() - emptyR;
+  const ithLast = Rules.gridSize() - emptyR;
   return (
     (Rules.gridSize() % 2 == 1 && inversions % 2 == 0) ||
     (Rules.gridSize() % 2 == 0 && inversions % 2 != ithLast % 2)
@@ -182,14 +182,14 @@ function mergeSortWithInversions(arr) {
     return [arr, 0];
   }
 
-  var mid = Math.floor(arr.length / 2);
-  var left = mergeSortWithInversions(arr.slice(0, mid));
-  var right = mergeSortWithInversions(arr.slice(mid));
+  const mid = Math.floor(arr.length / 2);
+  const left = mergeSortWithInversions(arr.slice(0, mid));
+  const right = mergeSortWithInversions(arr.slice(mid));
 
-  var li = 0;
-  var ri = 0;
-  var ret = [];
-  var retInv = left[1] + right[1];
+  let li = 0;
+  let ri = 0;
+  const ret = [];
+  let retInv = left[1] + right[1];
 
   while (li < left[0].length && ri < right[0].length) {
     if (left[0][li] <= right[0][ri]) {
@@ -217,8 +217,8 @@ function deleteBoard() {
 }
 
 function setPuzzleDesc() {
-  let $puzzleDesc = $('#puzzle-desc');
-  let $squares = $('.puzzle-square');
+  const $puzzleDesc = $('#puzzle-desc');
+  const $squares = $('.puzzle-square');
   let txt = '';
 
   for (let row = 0; row < Rules.gridSize(); row++) {
@@ -245,9 +245,9 @@ function setPuzzleDesc() {
 }
 
 function setTabOrder() {
-  let $puzzleContainer = $('#puzzle-container');
+  const $puzzleContainer = $('#puzzle-container');
   let ti = parseInt($puzzleContainer.attr('tabindex')) + 1;
-  let $squares = $puzzleContainer.find('.puzzle-square');
+  const $squares = $puzzleContainer.find('.puzzle-square');
   for (let row = 0; row < Rules.gridSize(); row++) {
     for (let col = 0; col < Rules.gridSize(); col++) {
       $squares
@@ -260,7 +260,7 @@ function setTabOrder() {
 }
 
 function createCorrectPosStyles() {
-  var correctPosArr = Array.apply(null, Array(Rules.gridSize() ** 2)).map(
+  const correctPosArr = Array.apply(null, Array(Rules.gridSize() ** 2)).map(
     (x, i) =>
       ".puzzle-square:not(.empty-square)[val='" +
       (i + 1) +
@@ -312,8 +312,8 @@ function docOnKeyUp(event) {
     return;
   }
 
-  var $empty = $('.empty-square');
-  var $adj = null;
+  const $empty = $('.empty-square');
+  let $adj = null;
   switch (event.keyCode) {
     case 37:
       //left
@@ -366,11 +366,11 @@ function docOnKeyUp(event) {
 }
 
 function squaresOnMouseDown() {
-  var $empty = $('.empty-square');
-  var clickedR = $(this).attr('currrow');
-  var clickedC = $(this).attr('currcol');
-  var emptyR = $empty.attr('currrow');
-  var emptyC = $empty.attr('currcol');
+  const $empty = $('.empty-square');
+  const clickedR = $(this).attr('currrow');
+  const clickedC = $(this).attr('currcol');
+  const emptyR = $empty.attr('currrow');
+  const emptyC = $empty.attr('currcol');
 
   // check if clicked square was the empty square
   if (clickedR === emptyR && clickedC === emptyC) {
@@ -394,8 +394,8 @@ function squaresOnMouseDown() {
 }
 
 function slide($clicked, $empty) {
-  var $toMove = null;
-  var dir = '';
+  let $toMove = null;
+  let dir = '';
   if ($clicked.attr('currrow') == $empty.attr('currrow')) {
     if ($clicked.attr('currcol') < $empty.attr('currcol')) {
       dir = 'right';
@@ -456,11 +456,11 @@ function slide($clicked, $empty) {
 
 /* todo can we check if clicked square is adj to empty for speed at all */
 function slideSquares(arr, dir) {
-  var currVals = new Array(arr.length);
-  var sign = dir == 'up' || dir == 'left' ? -1 : 1;
-  var changeAttr = dir == 'up' || dir == 'down' ? 'currrow' : 'currcol';
+  let currVals = new Array(arr.length);
+  const sign = dir == 'up' || dir == 'left' ? -1 : 1;
+  const changeAttr = dir == 'up' || dir == 'down' ? 'currrow' : 'currcol';
   for (let i = 0; i < arr.length; i++) {
-    var curr = parseInt($(arr[i]).attr(changeAttr));
+    const curr = parseInt($(arr[i]).attr(changeAttr));
     currVals[i] = curr;
     $(arr[i]).attr(changeAttr, curr + 1 * sign);
   }
@@ -477,13 +477,13 @@ function slideSquares(arr, dir) {
 
 /* returns transform css value string */
 function getTranslateString($square) {
-  var squareMargin = parseInt(
+  const squareMargin = parseInt(
     $('.puzzle-square').css('margin-left').replace('px', '')
   );
-  var ret = 'translate(calc({0} + {1}), calc({2} + {3}))';
-  var distX =
+  let ret = 'translate(calc({0} + {1}), calc({2} + {3}))';
+  const distX =
     $square.attr('currcol') - getColByVal($square.attr('startPosVal'));
-  var distY =
+  const distY =
     $square.attr('currrow') - getRowByVal($square.attr('startPosVal'));
 
   ret = ret.replace('{0}', distX.toString() + '00%');
@@ -513,7 +513,7 @@ function checkWin() {
   if any square is not its correct row and column the game is not yet won.
   if no square is out of place the game is won. */
 function isWin() {
-  var squares = $('.puzzle-square');
+  const squares = $('.puzzle-square');
 
   /*  in each iteration check the ith square and the ith from last.
       since most of the time this puzzle will be solved in order or in reverse
@@ -534,7 +534,7 @@ function isWin() {
      when the game is won.
   return true if square is in that position else return false*/
 function confirmSquareLocation(square) {
-  var val = $(square).attr('val');
+  const val = $(square).attr('val');
 
   return (
     getRowByVal(val) == $(square).attr('currrow') &&
@@ -601,8 +601,8 @@ function timerIsRunning() {
 
 /* returns string with current time broken into seconds, minutes, and hours */
 function getTime() {
-  let minutesElapsed = Math.floor(secondsElapsed / 60) % 60;
-  let hoursElapsed = Math.floor(secondsElapsed / 3600);
+  const minutesElapsed = Math.floor(secondsElapsed / 60) % 60;
+  const hoursElapsed = Math.floor(secondsElapsed / 3600);
 
   return (
     (hoursElapsed ? hoursElapsed.toString() + 'h ' : '') +
