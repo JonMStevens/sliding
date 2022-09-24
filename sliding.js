@@ -196,7 +196,7 @@ function mergeSortWithInversions(arr) {
       ret.push(left[0][li++]);
     } else {
       ret.push(right[0][ri++]);
-      retInv = retInv + (left[0].length - li);
+      retInv += left[0].length - li;
     }
   }
 
@@ -569,8 +569,8 @@ function shuffleArray(array) {
 var moveCount = 0;
 var clickCount = 0;
 function updateMoveCounter(numMoved) {
-  moveCount = moveCount + numMoved;
-  clickCount = clickCount + 1;
+  moveCount += numMoved;
+  clickCount++;
   $('#move-count').html(moveCount.toString());
   $('#click-count').html(clickCount.toString());
 }
