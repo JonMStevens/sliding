@@ -14,6 +14,7 @@ class Rules {
 }
 
 $(function () {
+  createMenu();
   createGame();
   $('#reset').click(resetGame);
   $('input:radio').change(function () {
@@ -32,6 +33,44 @@ function deleteGame() {
   deleteKeyBindings();
   deleteCorrectPosStyles();
   deleteBoard();
+}
+
+function createMenu() {
+  const $divGrSize = $('#divGrSize');
+  $divGrSize.append("<span class='spanGrSize'>board size: </span>");
+  var $tabItems = $('[tabindex]');
+
+  // max tab index should be higher than any radio buttons, should probably be reset button
+  var firstTabIndex =
+    Math.max.apply(
+      Math,
+      $tabItems.map(function () {
+        return parseInt($(this).attr('tabindex'));
+      })
+    ) - Rules.SIZE_OPTIONS.length;
+  const menuItems = Rules.SIZE_OPTIONS.map((size, i) => {
+    return (
+      "<input type='radio' name='grSize' id='grSize" +
+      size.toString() +
+      "' value='" +
+      size.toString() +
+      "' tabindex='" +
+      (firstTabIndex + i).toString() +
+      "'/>" +
+      "<label for='grSize" +
+      size.toString() +
+      "'>" +
+      size.toString() +
+      '</label>'
+    );
+  });
+  $divGrSize.append(menuItems.join(''));
+
+  $('#grSize' + Rules.GS.toString()).attr('checked', true);
+}
+
+function deleteMenu() {
+  $('#divGrSize').empty();
 }
 
 function resetGame() {

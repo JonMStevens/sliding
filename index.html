@@ -1,52 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Sliding</title>
-        <link rel="stylesheet" type="text/css" href="sliding.css" />
-        <!-- <script src="jquery-3.5.1.js"></script> -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="sliding.js"></script>
-    </head>
-    <body>
-      <div id="puzzle-desc" class="sr-only" tabindex="1">puzzle description</div>
-      <main>
-        <div id="puzzle-container" tabindex="2"></div>
-      </main>
-        <div id="bottom">
-  				<div id="stats">
-            <span class="counter" tabindex="93">moves:
-              <span id="move-count" class="counter-num">0</span>
-            </span>
-            <span class="counter" tabindex="94">clicks:
-              <span id="click-count" class="counter-num">0</span>
-            </span>
-            <span class="counter" tabindex="95">time:
-              <span id="timer" class="counter-num">0s</span>
-            </span>
-  				</div>
-          <div id='divRadio'>
-            <div id='divGrSize'>
-              <span>board size: </span>
-              <label for="grSize3">
-                <input type="radio" name="grSize" id="grSize3"
-                  value="3" tabindex="96">
-              </input>
-              3</label>
-              <label for="grSize4">
-                <input type="radio" name="grSize" id="grSize4"
-                  value="4" tabindex="97">
-              </input>
-              4</label>
-              <label for="grSize5">
-                <input type="radio" name="grSize" id="grSize5"
-                  value="5" tabindex="98">
-              </input>
-              5</label>
-            </div>
-          </div>
-          <button id="reset" tabindex="99">reset</button>
+  <head>
+    <meta charset="utf-8" />
+    <title>Sliding</title>
+    <link rel="stylesheet" type="text/css" href="sliding.css" />
+    <!-- <script src="jquery-3.5.1.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="sliding.js"></script>
+  </head>
+  <body>
+    <div id="puzzle-desc" class="sr-only" tabindex="1">puzzle description</div>
+    <main>
+      <div id="puzzle-container" tabindex="2"></div>
+    </main>
+    <div id="bottom">
+      <div id="stats">
+        <span class="counter" tabindex="93"
+          >moves:
+          <span id="move-count" class="counter-num">0</span>
+        </span>
+        <span class="counter" tabindex="94"
+          >clicks:
+          <span id="click-count" class="counter-num">0</span>
+        </span>
+        <span class="counter" tabindex="95"
+          >time:
+          <span id="timer" class="counter-num">0s</span>
+        </span>
       </div>
-
-    </body>
+      <div id="divRadio">
+        <div id="divGrSize"></div>
+      </div>
+      <button id="reset" tabindex="99">reset</button>
+    </div>
+  </body>
 </html>
