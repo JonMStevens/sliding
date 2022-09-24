@@ -225,19 +225,16 @@ function setTabOrder() {
 }
 
 function createCorrectPosStyles() {
-  // create rules to change style when square is in the correct position
-  for (let i = 0; i < Rules.gridSize() * Rules.gridSize(); i++) {
-    $(
-      "<style type='text/css' id='correctPosStyle" +
-        i.toString() +
-        "'>.puzzle-square:not(.empty-square)[val='" +
-        (i + 1) +
-        "']" +
-        "[currrow='" +
-        getRowByVal(i + 1) +
-        "'][currcol='" +
-        getColByVal(i + 1) +
-        "']" +
+  var correctPosArr = Array.apply(null, Array(Rules.gridSize() ** 2)).map(
+    (x, i) =>
+      ".puzzle-square:not(.empty-square)[val='" +
+      (i + 1) +
+      "']" +
+      "[currrow='" +
+      getRowByVal(i + 1) +
+      "'][currcol='" +
+      getColByVal(i + 1) +
+      "']" +
         '{ background-color: var(--square-correct-bg-color); color: var(--square-correct-color); }' +
         '</style>'
     ).appendTo('head');
