@@ -113,13 +113,9 @@ function createBoard() {
   while (inOrder || !solvable) {
     // randomize square order, will be added to the grid in this random order
     shuffleArray(squareArr);
-    for (let i = 0; i < squareArr.length; i++) {
-      if (parseInt($(squareArr[i]).attr('val')) != i + 1) {
-        inOrder = false;
-        break;
-      }
-    }
-
+    inOrder = squareArr.every((sq, i) => {
+      return parseInt($(sq).attr('val')) == i + 1;
+    });
     solvable = isSolvable(squareArr);
   }
 
