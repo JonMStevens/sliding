@@ -24,6 +24,7 @@ $(function () {
 function createGame() {
   createBoard();
   createCorrectPosStyles();
+  createDynamicStyles();
   createKeyBindings();
 }
 
@@ -245,6 +246,20 @@ function createCorrectPosStyles() {
 
 function deleteCorrectPosStyles() {
   $('[id^=correctPosStyle]').remove();
+}
+
+function getFontSize() {
+  return Rules.gridSize() <= 5 ? 3 : 15 / Rules.gridSize();
+}
+
+function getMarginSize() {
+  return Math.min(Math.max(15 - Rules.gridSize(), 1), 10);
+}
+
+function createDynamicStyles() {
+  $(
+    `<style type='text/css' id='dynamicStyles'>button { font-size: ${getFontSize()}rem; } .puzzle-square {margin: ${getMarginSize()}px}</style>`
+  ).appendTo('head');
 }
 
 function createKeyBindings() {
