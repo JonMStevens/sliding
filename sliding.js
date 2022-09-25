@@ -213,7 +213,6 @@ function mergeSortWithInversions(arr) {
 function deleteBoard() {
   $('.puzzle-square').remove();
   setPuzzleDesc();
-  setTabOrder();
 }
 
 function setPuzzleDesc() {
@@ -257,6 +256,20 @@ function setTabOrder() {
         .attr('tabindex', ti++);
     }
   }
+
+  $('#stats')
+    .children()
+    .each((index, $element) => {
+      $($element).attr('tabindex', ti++);
+    });
+
+  $('#divGrSize')
+    .children('input')
+    .each((index, $element) => {
+      $($element).attr('tabindex', ti++);
+    });
+
+  $('#reset').attr('tabindex', ti);
 }
 
 function createCorrectPosStyles() {
